@@ -1,0 +1,11 @@
+{
+  "name": "ai-environmental-footprint",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test:browser": "node qa/browser_audit.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.61.1"
+  }
+}

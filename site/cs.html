@@ -1,0 +1,878 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI zanechává stopu. Pro jeden prompt neexistuje jediné číslo.</title>
+  <meta name="description" content="Přehled environmentálních dopadů AI v roce 2026: energie, voda, emise, materiály, využití půdy a hardware s jasně uvedenými hranicemi měření a nejistotou.">
+  <link rel="alternate" hreflang="en" href="index.html">
+  <link rel="alternate" hreflang="cs" href="cs.html">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20100%20100'%3E%3Ctext%20y%3D'0.9em'%20font-size%3D'90'%3E%F0%9F%8C%B1%3C%2Ftext%3E%3C%2Fsvg%3E">
+  <script>document.documentElement.classList.add('js');</script>
+  <style>
+    :root {
+      --paper: #f3f6f4;
+      --surface: #ffffff;
+      --ink: #17211f;
+      --muted: #56645f;
+      --faint: #66736e;
+      --line: #d8e1dd;
+      --line-soft: #e8eeeb;
+      --teal: #096b61;
+      --teal-dark: #07544d;
+      --teal-tint: #e9f4f1;
+      --amber: #9d5700;
+      --amber-tint: #faf1e2;
+      --amber-line: #ead1aa;
+      --blue: #126d9e;
+      --blue-tint: #eaf4f9;
+      --rose: #9a4e54;
+      --rose-tint: #f8edee;
+      --chip: #edf2ef;
+      --grid: #e5ebe8;
+      --shadow: 0 18px 46px rgba(29, 53, 47, 0.07);
+      --serif: "Charter", "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+      --sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --mono: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 9% 3%, color-mix(in srgb, var(--teal) 8%, transparent), transparent 27rem),
+        var(--paper);
+      color: var(--ink);
+      font-family: var(--serif);
+      font-size: 17px;
+      line-height: 1.65;
+    }
+    a { color: var(--teal-dark); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    a:hover { text-decoration-thickness: 2px; }
+    button, input { font: inherit; }
+    a:focus-visible, button:focus-visible, summary:focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--teal) 70%, white);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+    h1, h2, h3 { line-height: 1.13; text-wrap: balance; }
+    h1 { font-size: clamp(2.65rem, 7vw, 4.6rem); letter-spacing: -0.035em; margin: 0; font-weight: 650; }
+    h2 { font-size: clamp(1.85rem, 4.5vw, 2.55rem); letter-spacing: -0.022em; margin: 0 0 1rem; font-weight: 650; }
+    h3 { font-size: 1.08rem; margin: 0 0 0.5rem; font-weight: 700; }
+    p { margin: 0 0 1rem; }
+    ul, ol { margin-top: 0.5rem; }
+    section { scroll-margin-top: 2rem; margin-top: 6.5rem; }
+    .page { width: min(100% - 2rem, 50rem); margin: 0 auto; padding-bottom: 5rem; }
+    .wide { width: min(100% - 2rem, 64rem); margin-left: auto; margin-right: auto; }
+
+    .eyebrow {
+      display: block;
+      margin-bottom: 0.65rem;
+      color: var(--teal-dark);
+      font: 750 0.71rem/1.2 var(--sans);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .lede { color: var(--muted); font-size: 1.14rem; max-width: 42rem; }
+    .small { color: var(--muted); font: 0.82rem/1.55 var(--sans); }
+    .micro { color: var(--faint); font: 0.74rem/1.5 var(--sans); }
+    .nowrap { white-space: nowrap; }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+    }
+
+    .language-switch {
+      position: fixed; z-index: 20; right: 1rem; top: 1rem;
+      border: 1px solid var(--line); border-radius: 999px; padding: 0.45rem 0.75rem;
+      background: color-mix(in srgb, var(--surface) 88%, transparent); color: var(--ink);
+      backdrop-filter: blur(10px); font: 700 0.78rem var(--sans);
+      box-shadow: var(--shadow); text-decoration: none;
+    }
+    .language-switch:hover { border-color: var(--teal); color: var(--teal-dark); }
+
+    .hero { padding: 6.7rem 0 2rem; }
+    .hero .standfirst { max-width: 44rem; margin-top: 1.45rem; color: var(--muted); font-size: 1.25rem; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 0.65rem; margin: 1.8rem 0 0; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      border: 1px solid var(--line); border-radius: 999px; padding: 0.58rem 1rem;
+      background: var(--surface); color: var(--ink); text-decoration: none;
+      cursor: pointer; font: 700 0.86rem var(--sans);
+    }
+    .btn.primary { background: var(--teal); border-color: var(--teal); color: #fff; }
+    .btn:hover { border-color: var(--teal); }
+
+    .toc {
+      display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0;
+      padding: 0.8rem 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    }
+    .toc a {
+      padding: 0.22rem 0.58rem; border-radius: 999px; color: var(--muted);
+      text-decoration: none; font: 600 0.75rem var(--sans);
+    }
+    .toc a:hover { color: var(--teal-dark); background: var(--chip); }
+
+    .card {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+      padding: 1.2rem 1.3rem; box-shadow: var(--shadow);
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    @media (max-width: 720px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+    .kicker {
+      margin: 1.4rem 0; padding: 1rem 1.15rem; border-left: 4px solid var(--teal);
+      border-radius: 0 10px 10px 0; background: var(--teal-tint);
+    }
+    .kicker p:last-child { margin-bottom: 0; }
+    .warning {
+      margin: 1.4rem 0; padding: 1rem 1.15rem;
+      border: 1px solid var(--amber-line); border-radius: 10px; background: var(--amber-tint);
+    }
+    .warning strong { color: var(--amber); }
+
+    .source-chip, .scope-chip {
+      display: inline-flex; align-items: center; border: 1px solid var(--line-soft);
+      border-radius: 999px; padding: 0.16rem 0.52rem; background: var(--chip);
+      color: var(--muted); font: 700 0.67rem var(--sans); letter-spacing: 0.02em;
+    }
+    .source-chip.measure { color: var(--teal-dark); background: var(--teal-tint); }
+    .source-chip.model { color: var(--amber); background: var(--amber-tint); }
+    .source-chip.law { color: var(--blue); background: var(--blue-tint); }
+    .source-chip.provider { color: var(--rose); background: var(--rose-tint); }
+    .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.8rem; }
+    sup a { text-decoration: none; font: 750 0.68rem var(--sans); padding: 0 0.08rem; }
+
+    .lens-tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.25rem 0 0.85rem; }
+    .lens-tabs button, .switch button {
+      border: 1px solid var(--line); border-radius: 999px; padding: 0.46rem 0.85rem;
+      background: var(--chip); color: var(--muted); cursor: pointer;
+      font: 700 0.78rem var(--sans);
+    }
+    .lens-tabs button[aria-pressed="true"], .switch button[aria-pressed="true"] {
+      color: #fff; background: var(--teal); border-color: var(--teal);
+    }
+    .lens-panel { min-height: 7.6rem; }
+    .lens-panel h3 { margin-bottom: 0.4rem; }
+    .lens-panel p { margin-bottom: 0; color: var(--muted); }
+
+    .evidence-key { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.6rem; margin-top: 1.2rem; }
+    .evidence-key div { padding: 0.75rem; border-top: 3px solid var(--line); background: var(--surface); border-radius: 0 0 8px 8px; }
+    .evidence-key div:nth-child(1) { border-color: var(--teal); }
+    .evidence-key div:nth-child(2) { border-color: var(--blue); }
+    .evidence-key div:nth-child(3) { border-color: var(--amber); }
+    .evidence-key div:nth-child(4) { border-color: var(--rose); }
+    .evidence-key div:nth-child(5) { border-color: var(--faint); }
+    .evidence-key b { display: block; font: 700 0.76rem var(--sans); }
+    .evidence-key span { display: block; margin-top: 0.2rem; color: var(--faint); font: 0.67rem/1.35 var(--sans); }
+    @media (max-width: 760px) { .evidence-key { grid-template-columns: 1fr 1fr; } }
+
+    .bignum-row { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin: 1.4rem 0; }
+    .bignum { font: 780 clamp(3.4rem, 11vw, 6rem)/0.9 var(--sans); letter-spacing: -0.055em; color: var(--teal-dark); }
+    .bignum span { margin-left: 0.2em; color: var(--muted); font-size: 0.32em; letter-spacing: -0.01em; }
+    .bignum-note { max-width: 22rem; color: var(--muted); font: 0.84rem/1.5 var(--sans); }
+
+    .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin: 1rem 0; }
+    .metric { padding: 1rem; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+    .metric .value { font: 760 1.55rem var(--sans); letter-spacing: -0.02em; }
+    .metric .label { color: var(--faint); font: 0.7rem/1.35 var(--sans); text-transform: uppercase; letter-spacing: 0.08em; }
+    .metric .note { margin-top: 0.35rem; color: var(--muted); font: 0.74rem/1.4 var(--sans); }
+    @media (max-width: 620px) { .metric-grid { grid-template-columns: 1fr; } }
+
+    .stack-wrap { margin-top: 1.2rem; }
+    .stack { display: flex; height: 28px; overflow: hidden; border: 1px solid var(--line); border-radius: 7px; background: var(--chip); }
+    .stack span:nth-child(1) { width: 58.33%; background: var(--teal); }
+    .stack span:nth-child(2) { width: 25%; background: var(--blue); }
+    .stack span:nth-child(3) { width: 8.33%; background: var(--amber); }
+    .stack span:nth-child(4) { width: 8.34%; background: var(--rose); }
+    .stack-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem 1rem; margin-top: 0.7rem; }
+    .stack-legend span { color: var(--muted); font: 0.74rem var(--sans); }
+    .dot { display: inline-block; width: 0.68rem; height: 0.68rem; margin-right: 0.35rem; border-radius: 2px; vertical-align: -0.03rem; }
+
+    .task-viz { display: grid; grid-template-columns: 11rem 1fr; gap: 1.4rem; align-items: center; }
+    .task-number { font: 780 2.8rem/1 var(--sans); letter-spacing: -0.04em; }
+    .task-number span { display: block; margin-top: 0.35rem; color: var(--muted); font: 0.72rem/1.4 var(--sans); letter-spacing: 0; }
+    .task-track { position: relative; height: 22px; overflow: hidden; border-radius: 6px; background: var(--chip); }
+    .task-fill { height: 100%; min-width: 4%; border-radius: 6px; background: var(--teal); transition: width 0.35s ease, background 0.35s ease; }
+    .task-ratio { margin-top: 0.55rem; color: var(--muted); font: 0.77rem/1.45 var(--sans); }
+    @media (max-width: 620px) { .task-viz { grid-template-columns: 1fr; } }
+
+    .water-flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7rem; margin: 1.2rem 0; }
+    .water-step { position: relative; padding: 1rem; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+    .water-step:not(:last-child)::after { content: "→"; position: absolute; right: -0.62rem; top: 50%; z-index: 2; color: var(--blue); font: 750 1rem var(--sans); }
+    .water-step b { display: block; color: var(--blue); font: 750 0.82rem var(--sans); }
+    .water-step span { display: block; margin-top: 0.25rem; color: var(--muted); font: 0.75rem/1.4 var(--sans); }
+    @media (max-width: 680px) {
+      .water-flow { grid-template-columns: 1fr; }
+      .water-step:not(:last-child)::after { content: "↓"; right: 50%; top: auto; bottom: -0.78rem; }
+    }
+    .water-card { border-top: 4px solid var(--blue); }
+    .water-value { color: var(--blue); font: 780 2rem/1.1 var(--sans); letter-spacing: -0.03em; }
+    .water-card h3 { margin-top: 0.5rem; }
+    .no-equation { text-align: center; padding: 1rem; color: var(--rose); font: 760 clamp(1.25rem, 4vw, 2rem) var(--mono); }
+
+    .bars { margin: 1.2rem 0 0.5rem; }
+    .bar-row { display: grid; grid-template-columns: 5.2rem 1fr 5.6rem; align-items: center; gap: 0.7rem; margin: 0.75rem 0; }
+    .bar-label { font: 700 0.78rem var(--sans); }
+    .bar-track { height: 26px; border-radius: 6px; background: var(--chip); overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 6px; background: var(--teal); }
+    .bar-fill.projected { background: repeating-linear-gradient(135deg, var(--amber), var(--amber) 8px, color-mix(in srgb, var(--amber) 72%, var(--surface)) 8px, color-mix(in srgb, var(--amber) 72%, var(--surface)) 15px); }
+    .bar-value { text-align: right; font: 760 0.83rem var(--sans); }
+
+    .split-stat { display: flex; align-items: baseline; gap: 0.55rem; margin-bottom: 0.4rem; }
+    .split-stat b { font: 780 2.2rem var(--sans); letter-spacing: -0.04em; color: var(--teal-dark); }
+    .split-stat span { color: var(--muted); font: 0.75rem/1.3 var(--sans); }
+
+    .ewaste-card:first-child { border-top: 4px solid var(--amber); }
+    .ewaste-card:last-child { border-top: 4px solid var(--rose); }
+    .ewaste-value { font: 780 1.75rem/1.05 var(--sans); letter-spacing: -0.035em; }
+    .horizon { display: inline-block; margin: 0.5rem 0 0.7rem; border-radius: 5px; padding: 0.2rem 0.45rem; background: var(--chip); color: var(--muted); font: 750 0.68rem var(--sans); }
+
+    .rules-grid .card { border-top: 4px solid var(--blue); }
+    .rule-number { color: var(--blue); font: 780 2rem/1 var(--sans); letter-spacing: -0.04em; }
+
+    .action-list { margin: 0; padding-left: 1.15rem; }
+    .action-list li { margin-bottom: 0.55rem; }
+    .action-list li::marker { color: var(--teal); }
+    .procure {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.65rem;
+      margin-top: 1rem; counter-reset: field;
+    }
+    .procure div { counter-increment: field; padding: 0.8rem; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+    .procure div::before { content: counter(field, decimal-leading-zero); display: block; color: var(--teal-dark); font: 750 0.67rem var(--mono); }
+    .procure b { font: 700 0.82rem var(--sans); }
+    @media (max-width: 620px) { .procure { grid-template-columns: 1fr 1fr; } }
+
+    .qcard { margin: 0.9rem 0; padding: 1.05rem 1.15rem; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+    .qcard blockquote { margin: 0 0 0.8rem; font-weight: 650; line-height: 1.45; }
+    .qopts { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .qopts button { border: 1px solid var(--line); border-radius: 999px; padding: 0.42rem 0.8rem; background: var(--chip); color: var(--ink); cursor: pointer; font: 700 0.76rem var(--sans); }
+    .qopts button:disabled { cursor: default; opacity: 0.55; }
+    .qopts button.right { border-color: var(--teal); background: var(--teal-tint); color: var(--teal-dark); opacity: 1; }
+    .qopts button.wrong { border-color: var(--amber); background: var(--amber-tint); color: var(--amber); opacity: 1; }
+    .qopts button.answer { border-color: var(--teal); opacity: 1; }
+    .qreveal { display: none; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--line-soft); color: var(--muted); font-size: 0.93rem; }
+    .qreveal.show { display: block; }
+    .qscore { display: none; margin-top: 1rem; font: 750 0.9rem var(--sans); }
+    .qscore.show { display: block; }
+
+    details { margin: 0.9rem 0; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+    summary { cursor: pointer; padding: 0.75rem 1rem; color: var(--teal-dark); font: 700 0.82rem var(--sans); }
+    details .inside { padding: 0 1rem 0.9rem; color: var(--muted); font-size: 0.94rem; }
+
+    .source-list { margin: 1.2rem 0 0; padding-left: 1.35rem; }
+    .source-list li { margin-bottom: 0.68rem; padding-left: 0.2rem; color: var(--muted); font: 0.82rem/1.55 var(--sans); }
+    .source-list b { color: var(--ink); }
+    footer { margin-top: 5rem; padding-top: 1.2rem; border-top: 1px solid var(--line); color: var(--faint); font: 0.76rem/1.6 var(--sans); }
+
+    html.js .reveal { opacity: 0; transform: translateY(12px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    html.js .reveal.in { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      html.js .reveal { opacity: 1; transform: none; transition: none; }
+      .task-fill { transition: none; }
+    }
+    @media print {
+      .language-switch, .hero-actions, .toc, .qopts { display: none !important; }
+      .hero { padding-top: 1.5rem; }
+      .reveal { opacity: 1 !important; transform: none !important; }
+      section { margin-top: 3rem; }
+      .card, .qcard, .warning, .kicker { break-inside: avoid; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="language-switch" href="index.html" lang="en" hreflang="en" aria-label="Otevřít anglickou verzi">English</a>
+
+  <main class="page">
+    <header class="hero">
+      <span class="eyebrow">AI, energie, voda, materiály a infrastruktura · Aktualizováno 19. července 2026</span>
+      <h1>AI zanechává stopu.<br>Pro jeden prompt neexistuje jediné číslo.</h1>
+      <p class="standfirst">Krátká textová odpověď, řešení problémů, obraz nebo video mohou mít velmi rozdílné výpočetní nároky. U vody záleží na tom, co přesně započítáme. A i malá spotřeba jednoho požadavku se při masovém používání promítá do růstu infrastruktury. Proto zde každé číslo uvádíme s potřebným kontextem.</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="#method">Jak číst údaje o stopě ↓</a>
+        <a class="btn" href="#verdict">Přejít k závěru →</a>
+        <a class="btn" href="#evidence">Zdroje a metodika →</a>
+      </div>
+    </header>
+
+    <nav class="toc" aria-label="Obsah">
+      <a href="#method">Jak číst čísla</a>
+      <a href="#prompt">Jeden prompt</a>
+      <a href="#tasks">Rozdíly mezi úlohami</a>
+      <a href="#water">Voda</a>
+      <a href="#scale">Systémové měřítko</a>
+      <a href="#perspective">Pro srovnání</a>
+      <a href="#hardware">Hardware</a>
+      <a href="#rules">Pravidla EU</a>
+      <a href="#czech">Český kontext</a>
+      <a href="#actions">Co lze dělat</a>
+      <a href="#quiz">Kontrola tvrzení</a>
+      <a href="#evidence">Zdroje</a>
+    </nav>
+
+    <section id="method" class="reveal">
+      <span class="eyebrow">01 · Nejprve čtěte kontext</span>
+      <h2>Než začnete porovnávat čísla, položte šest otázek</h2>
+      <p class="lede">Samotné vstupní zadání (<em lang="en">prompt</em>) žádnou environmentální stopu neurčuje. Číslo vždy patří ke konkrétní úloze, systému a způsobu započítání. Jakmile se něco z toho změní, může se změnit i výsledek.</p>
+
+      <div class="lens-tabs" role="group" aria-label="Hlediska environmentální stopy">
+        <button type="button" aria-pressed="true" data-lens="task">Úloha</button>
+        <button type="button" aria-pressed="false" data-lens="system">Systém</button>
+        <button type="button" aria-pressed="false" data-lens="boundary">Hranice</button>
+        <button type="button" aria-pressed="false" data-lens="location">Místo</button>
+        <button type="button" aria-pressed="false" data-lens="date">Datum</button>
+        <button type="button" aria-pressed="false" data-lens="evidence">Důkazy</button>
+      </div>
+      <div class="card lens-panel" id="lens-panel" aria-live="polite">
+        <h3>Jaká úloha byla provedena?</h3>
+        <p>Krátká textová odpověď, syntéza dlouhého kontextu, řešení problémů, obraz, video nebo úloha prováděná AI agentem s několika nástroji nejsou totéž. Bez dalšího je proto nelze srovnávat.</p>
+      </div>
+
+      <div class="evidence-key" aria-label="Typy důkazů použité na stránce">
+        <div><b>Produkční měření</b><span>Konkrétní služba a datum; nejblíže reálnému provozu.</span></div>
+        <div><b>Kontrolovaný srovnávací test (benchmark)</b><span>Vhodnější pro srovnání; nepopisuje celou veřejnou službu.</span></div>
+        <div><b>Modelový odhad</b><span>Užitečný bez přímého měření; výsledek určují předpoklady.</span></div>
+        <div><b>Posouzení životního cyklu (LCA)</b><span>Širší pohled na životní cyklus; pokud studii zpracoval poskytovatel, uvádíme to výslovně.</span></div>
+        <div><b>Sektorový výhled</b><span>Infrastruktura a scénáře, nikoli jeden prompt.</span></div>
+      </div>
+
+      <div class="kicker">
+        <p><strong>Pravidlo pro čtení:</strong> pokud u čísla chybí úloha, systém, hranice započítání, místo, datum nebo způsob měření či odhadu, je to jen orientační údaj – nikoli stopa právě vašeho požadavku.<sup><a href="#src-1">1</a></sup><sup><a href="#src-2">2</a></sup><sup><a href="#src-3">3</a></sup><sup><a href="#src-4">4</a></sup></p>
+      </div>
+      <p class="micro">Platné doporučení ITU-T L.1801 stojí na stejné zásadě: nejprve vymezit funkční jednotku (<em lang="en">functional unit</em>), hranice systému (<em lang="en">system boundary</em>) a fáze životního cyklu, poté zvolit relevantní dopady na klima, vodu, zdroje a půdu.<sup><a href="#src-17">17</a></sup></p>
+    </section>
+
+    <section id="prompt" class="reveal">
+      <span class="eyebrow">02 · Jeden změřený textový prompt</span>
+      <h2>0,24 Wh je cenný údaj – ale platí jen pro úzce vymezený případ</h2>
+      <p>Google měřil spotřebu v celém produkčním systému, který obsluhuje požadavky Gemini Apps. Pro květen 2025 tak určil medián jednoho textového promptu. Studie započítala akcelerátory, hostitelské CPU a paměť, rezervovanou nevyužitou kapacitu i režii datového centra.<sup><a href="#src-2">2</a></sup></p>
+
+      <div class="bignum-row">
+        <div class="bignum">0,24<span>Wh</span></div>
+        <div class="bignum-note">
+          <div class="chips"><span class="source-chip measure">Měření v produkčním provozu</span><span class="source-chip provider">Nerecenzovaný rukopis (preprint) poskytovatele</span></div>
+          Medián textového promptu v Gemini Apps · květen 2025 · přibližně 8,6 sekundy provozu 100W televizoru.
+        </div>
+      </div>
+
+      <div class="metric-grid">
+        <div class="metric">
+          <div class="label">Energie</div>
+          <div class="value">0,24 Wh</div>
+          <div class="note">Celý systém obsluhy vymezený ve studii.</div>
+        </div>
+        <div class="metric">
+          <div class="label">Emise</div>
+          <div class="value">0,03 gCO₂e</div>
+          <div class="note">Emise z elektřiny podle metody založené na trhu (<em lang="en">market-based</em>) a dopady spojené s výrobou akcelerátorů.</div>
+        </div>
+        <div class="metric">
+          <div class="label">Voda</div>
+          <div class="value">0,26 ml</div>
+          <div class="note">Chlazení a související infrastruktura uvnitř datových center Googlu.</div>
+        </div>
+      </div>
+
+      <div class="card stack-wrap">
+        <h3>Z čeho se 0,24 Wh skládá?</h3>
+        <div class="stack" role="img" aria-label="Zaokrouhlené složky spotřeby: akcelerátor 0,14 Wh, hostitelské CPU a paměť 0,06 Wh, nevyužitá kapacita 0,02 Wh, režie datového centra 0,02 Wh">
+          <span title="Akcelerátor 0,14 Wh"></span><span title="Hostitelské CPU a paměť 0,06 Wh"></span><span title="Nevyužitá kapacita 0,02 Wh"></span><span title="Režie datového centra 0,02 Wh"></span>
+        </div>
+        <div class="stack-legend">
+          <span><i class="dot" style="background:var(--teal)"></i>Akcelerátor · 0,14 Wh</span>
+          <span><i class="dot" style="background:var(--blue)"></i>Hostitelské CPU a paměť · 0,06 Wh</span>
+          <span><i class="dot" style="background:var(--amber)"></i>Nevyužitá kapacita · 0,02 Wh</span>
+          <span><i class="dot" style="background:var(--rose)"></i>Režie datového centra · 0,02 Wh</span>
+        </div>
+        <p class="micro" style="margin-top:.65rem">Jednotlivé složky jsou zaokrouhlené. Když autoři započítali pouze akcelerátor, vyšla jim ve stejné studii hodnota 0,10 Wh. Rozdíl ukazuje, proč na hranici započítání tolik záleží.</p>
+      </div>
+
+      <div class="warning">
+        <p><strong>Nevydávejte tuto hodnotu za „spotřebu jednoho AI promptu“.</strong> Popisuje jednoho poskytovatele, jednu třídu produktů a jediný měsíc. Autoři pracují pro Google a rukopis dosud neprošel recenzním řízením. Jde o cenné měření z produkčního provozu, ne o nezávislý univerzální srovnávací test.</p>
+      </div>
+    </section>
+
+    <section id="tasks" class="reveal">
+      <span class="eyebrow">03 · Volba úlohy</span>
+      <h2>Řešení problémů může spotřebu změnit mnohem víc, než napovídá slovo „prompt“</h2>
+      <p>Studie ML.ENERGY porovnala 46 modelů v sedmi úlohách a v 1 858 konfiguracích s H100/B200. Při kontrolovaném srovnání stejného modelu spotřeboval Qwen 3 32B při řešení problémů se zapnutým režimem usuzování (<em lang="en">reasoning</em>) výrazně více energie než při běžné konverzaci s tímto režimem vypnutým. Zdroj tyto kategorie označuje jako <em lang="en">Problem Solving</em> a <em lang="en">Text Conversation</em>.<sup><a href="#src-3">3</a></sup></p>
+
+      <div class="card">
+        <div class="chips"><span class="source-chip measure">Kontrolovaný benchmark</span><span class="source-chip model">Preprint</span><span class="scope-chip">Qwen 3 32B · jedno GPU B200</span></div>
+        <div class="switch" role="group" aria-label="Vyberte úlohu z benchmarku">
+          <button type="button" aria-pressed="true" data-task="conversation">Konverzace</button>
+          <button type="button" aria-pressed="false" data-task="reasoning">Řešení problémů</button>
+        </div>
+        <div class="task-viz" style="margin-top:1rem">
+          <div class="task-number" id="task-number">95 J<span id="task-name">Textová konverzace · na jednu odpověď</span></div>
+          <div>
+            <div class="task-track" aria-hidden="true"><div class="task-fill" id="task-fill" style="width:4.34%"></div></div>
+            <p class="task-ratio" id="task-ratio">Výchozí hodnota pro srovnání těchto dvou úloh.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-3" style="margin-top:1rem">
+        <div class="card"><div class="split-stat"><b>23×</b><span>stejný model</span></div><p class="small">Ve srovnání modelu Qwen 3 32B připadlo na řešení problémů 2 192 J, zatímco na konverzaci 95 J.</p></div>
+        <div class="card"><div class="split-stat"><b>≈25×</b><span>průměr studie</span></div><p class="small">Průměrná energie na jednu odpověď při řešení problémů oproti konverzaci v energeticky nejúspornějších konfiguracích B200.</p></div>
+        <div class="card"><div class="split-stat"><b>&gt;100×</b><span>v některých případech</span></div><p class="small">Generování videa v některých případech spotřebovalo více než stonásobek energie potřebné k vytvoření obrázku.</p></div>
+      </div>
+
+      <p class="micro" style="margin-top:.8rem">Jde o výsledky srovnávacího testu, ne o zaručené násobky pro každou veřejnou službu. K rozdílu při řešení problémů přispěly delší výstupy a vyšší nároky na paměť. Samotná míra využití GPU navíc ve studii měnila spotřebu troj- až pětinásobně.</p>
+    </section>
+
+    <section id="water" class="reveal">
+      <span class="eyebrow">04 · Voda</span>
+      <h2>Tři publikované hodnoty. Tři různé otázky.</h2>
+      <p class="lede">Spor o „vodu na jeden prompt“ často vzniká proto, že studie měří jiné systémy, úlohy a části životního cyklu. Tři známé hodnoty proto dává smysl ukázat vedle sebe jen s jejich rozdíly.</p>
+
+      <div class="water-flow" aria-label="Tři úrovně započítání spotřeby vody">
+        <div class="water-step"><b>Přímý provoz (Scope 1)</b><span>Voda spotřebovaná v datovém centru, často odparem při chlazení.</span></div>
+        <div class="water-step"><b>Výroba elektřiny (Scope 2)</b><span>Voda spotřebovaná mimo areál při výrobě elektřiny pro dané zařízení.</span></div>
+        <div class="water-step"><b>Dodavatelský řetězec (Scope 3)</b><span>Voda spojená s výrobou čipů, serverů a dalšího vybavení.</span></div>
+      </div>
+      <p class="micro">Rozdělení do tří úrovní vychází z práce Li et al. Odběr vody a spotřeba vody spolu souvisejí, ale nejde o totožné ukazatele.<sup><a href="#src-4">4</a></sup></p>
+
+      <div class="grid-3" style="margin-top:1.3rem">
+        <div class="card water-card">
+          <div class="chips"><span class="source-chip measure">Produkční měření + započítání</span></div>
+          <div class="water-value">0,26 ml</div>
+          <h3>Google · květen 2025</h3>
+          <p class="small">Medián textového promptu v Gemini Apps. Přímá spotřeba vody na chlazení a související infrastrukturu datového centra. Preprint zpracovaný poskytovatelem.</p>
+        </div>
+        <div class="card water-card">
+          <div class="chips"><span class="source-chip model">Modelový odhad</span></div>
+          <div class="water-value">500 ml / 10–50</div>
+          <h3>Li et al. · scénář GPT-3</h3>
+          <p class="small">Přibližně jedna půllitrová láhev na 10–50 středně dlouhých odpovědí podle místa a doby nasazení GPT-3. Nejde o přímé měření současných chatbotů.</p>
+        </div>
+        <div class="card water-card">
+          <div class="chips"><span class="source-chip provider">Odhad z LCA poskytovatele</span></div>
+          <div class="water-value">45 ml</div>
+          <h3>Mistral · 2025</h3>
+          <p class="small">Dodatečný dopad (<em lang="en">marginal impact</em>) jedné odpovědi Le Chat o 400 výstupních tokenech, tedy textových jednotkách modelu, podle studie životního cyklu společnosti Mistral; zařízení uživatele není zahrnuto.</p>
+        </div>
+      </div>
+
+      <div class="warning">
+        <div class="no-equation" aria-label="Tyto dvě hodnoty nelze přímo dělit ani použít k sestavení pořadí">45 ml ÷ 0,26 ml ≠ platné pořadí</div>
+        <p><strong>Tato čísla nelze prostě vydělit.</strong> Studie se liší poskytovatelem, modelem, úlohou, datem, místem i hranicí započítání. Nelze z nich proto sestavit pořadí systémů ani tvrdit, že jedna služba je vždy „žíznivější“ než jiná.<sup><a href="#src-2">2</a></sup><sup><a href="#src-4">4</a></sup><sup><a href="#src-5">5</a></sup></p>
+      </div>
+
+      <h3 style="margin-top:2rem">V měřítku celého systému může nepřímá spotřeba vody převýšit spotřebu v areálu</h3>
+      <div class="grid-2" style="margin-top:.8rem">
+        <div class="card water-card">
+          <div class="chips"><span class="source-chip measure">Odhad národní laboratoře</span><span class="scope-chip">Všechna datová centra v USA · 2023</span></div>
+          <div class="split-stat"><b>66 miliard l</b><span>přímá spotřeba v areálu</span></div>
+          <div class="split-stat"><b>téměř 800 miliard l</b><span>nepřímo při výrobě elektřiny</span></div>
+          <p class="small">Laboratoř Berkeley Lab odhadla oba údaje podle umístění zařízení a skladby výroby elektřiny v jednotlivých regionech. Neměla však data o smlouvách na dodávky elektřiny pro konkrétní zařízení ani o vlastní výrobě, takže nepřímý údaj zůstává modelovým odhadem.<sup><a href="#src-14">14</a></sup></p>
+        </div>
+        <div class="card water-card">
+          <div class="chips"><span class="source-chip model">Recenzované scénáře</span><span class="scope-chip">Servery pro AI v USA · 2024–2030</span></div>
+          <div class="split-stat"><b>731–1 125 milionů m³</b><span>roční vodní stopa</span></div>
+          <div class="split-stat"><b>24–44 Mt CO₂e</b><span>dodatečné roční emise</span></div>
+          <p class="small">Jde o podmíněné scénáře rozvoje, nikoli o měření. Rozpětí výrazně ovlivňuje rychlost výstavby, efektivita, dekarbonizace elektrizační soustavy a umístění serverů.<sup><a href="#src-15">15</a></sup></p>
+        </div>
+      </div>
+      <p class="micro" style="margin-top:.8rem">Karty odpovídají na různé otázky. První odhaduje všechna datová centra v USA v roce 2023, druhá modeluje nasazování serverů pro AI v letech 2024–2030. Proto je nelze sloučit ani stavět proti sobě jako dva odhady téže věci.<sup><a href="#src-14">14</a></sup><sup><a href="#src-15">15</a></sup></p>
+    </section>
+
+    <section id="scale" class="reveal">
+      <span class="eyebrow">05 · Od požadavku k celému systému</span>
+      <h2>Malá spotřeba jedné úlohy nevylučuje rychlý růst infrastruktury</h2>
+      <p>Centrální výhled IEA z dubna 2026 odhaduje spotřebu elektřiny <strong>všech datových center</strong> na 485 TWh v roce 2025 a 950 TWh v roce 2030. To je téměř dvojnásobek a přibližně 3 % světové poptávky po elektřině v roce 2030. Spotřeba datových center zaměřených na AI se má podle samostatné projekce ztrojnásobit.<sup><a href="#src-1">1</a></sup></p>
+
+      <div class="card bars">
+        <div class="chips"><span class="source-chip model">Centrální projekce IEA</span><span class="scope-chip">Všechna datová centra</span></div>
+        <div class="bar-row">
+          <div class="bar-label">2025</div>
+          <div class="bar-track"><div class="bar-fill" style="width:51.05%"></div></div>
+          <div class="bar-value">485 TWh</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">2030</div>
+          <div class="bar-track"><div class="bar-fill projected" style="width:100%"></div></div>
+          <div class="bar-value">950 TWh</div>
+        </div>
+        <p class="micro">Rok 2030 je projekce, nikoli měření. Výhled se může měnit podle investic, kapacitních omezení, efektivity a způsobů využití.</p>
+      </div>
+
+      <div class="grid-2" style="margin-top:1rem">
+        <div class="card">
+          <div class="chips"><span class="source-chip measure">Změna v roce 2025 podle IEA</span></div>
+          <div class="split-stat"><b>+17 %</b><span>elektřina všech datových center</span></div>
+          <div class="split-stat"><b>+50 %</b><span>elektřina datových center zaměřených na AI</span></div>
+          <p class="small">Odhad IEA pro růst během roku 2025.<sup><a href="#src-1">1</a></sup></p>
+        </div>
+        <div class="card">
+          <div class="chips"><span class="source-chip model">Paradox efektivity</span></div>
+          <p>Podle IEA klesala v posledních letech energetická náročnost jedné úlohy AI nejméně o jeden řád ročně. Rychlé rozšíření AI a náročnější způsoby využití však celkovou poptávku datových center zvýšily.<sup><a href="#src-1">1</a></sup></p>
+          <p class="small">Vyšší efektivita snižuje náročnost jedné úlohy, ale sama neurčuje jejich celkový počet.</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top:2rem">Nízký globální podíl může skrývat vysokou místní koncentraci</h3>
+      <div class="grid-2" style="margin-top:.8rem">
+        <div class="card">
+          <div class="chips"><span class="source-chip model">Scénáře pro USA v roce 2030</span></div>
+          <div class="split-stat"><b>649 TWh</b><span>referenční scénář</span></div>
+          <p>Aktualizace Berkeley Lab z června 2026 v referenčním scénáři odhaduje 11,8 % předpokládané spotřeby elektřiny v USA.</p>
+          <p class="small">Rozpětí citlivostní analýzy: 521–843 TWh, tedy 9,5–15,3 %. Model sestavený zdola nahoru (<em lang="en">bottom-up</em>) zahrnuje všechna datová centra v USA.<sup><a href="#src-6">6</a></sup></p>
+        </div>
+        <div class="card">
+          <div class="chips"><span class="source-chip measure">Irská statistika za rok 2025</span></div>
+          <div class="split-stat"><b>23 %</b><span>měřené spotřeby elektřiny</span></div>
+          <p>Irský statistický úřad uvádí pro rok 2025 podíl 23 %, oproti 22 % v roce 2024 a 5 % v roce 2015.</p>
+          <p class="small">Jde o oficiální statistiku datových center, nikoli o podíl samotné AI.<sup><a href="#src-7">7</a></sup></p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:1rem">
+        <div class="chips"><span class="source-chip model">Výzkumná zpráva OSN</span><span class="scope-chip">Místo a rozložení dopadů</span></div>
+        <h3>Nízkouhlíková varianta nemusí současně šetřit vodu ani půdu</h3>
+        <p>UNU-INWEH upozorňuje, že o dopadech rozhoduje také místo výstavby a to, kdo je ponese. Nároky na elektřinu, odběry vody, zábor půdy, těžba nerostných surovin a elektroodpad se mohou soustředit v konkrétních regionech, zatímco přínosy AI směřují jinam.<sup><a href="#src-19">19</a></sup></p>
+        <p class="small">Uhlíková, vodní a půdní stopa se nemusejí měnit stejným směrem. Pro rozhodování o umístění proto nestačí jediný ukazatel emisí.</p>
+      </div>
+    </section>
+
+    <section id="perspective" class="reveal">
+      <span class="eyebrow">06 · Co lze srovnat a co už ne</span>
+      <h2>AI je součástí širší digitální stopy</h2>
+      <p class="lede">Také sledování videa, streamování hudby, sociální sítě, běžné prohlížení webu a videohovory využívají zařízení, sítě, datová centra a fyzický hardware. Zařadit AI do širších souvislostí dává smysl, jen pokud u každého čísla zůstane jasné, jakou službu, období, jednotku a hranici systému popisuje.</p>
+
+      <div class="grid-3" style="margin-top:1.3rem">
+        <div class="card">
+          <div class="chips"><span class="source-chip measure">Měření v provozu</span><span class="scope-chip">Gemini Apps · květen 2025</span></div>
+          <div class="split-stat"><b>0,24 Wh</b><span>na jeden textový prompt (medián)</span></div>
+          <p class="small">Měření zahrnující celý systém obsluhy konkrétní služby a konkrétní typ úlohy zpracoval její poskytovatel. Jde o provozní spotřebu elektřiny, nikoli o posouzení životního cyklu AI obecně.<sup><a href="#src-2">2</a></sup></p>
+        </div>
+        <div class="card">
+          <div class="chips"><span class="source-chip model">Historický odhad IEA</span><span class="scope-chip">Streamování videa · 2019</span></div>
+          <div class="split-stat"><b>≈77 Wh</b><span>hodina běžného sledování</span></div>
+          <p class="small">Aktualizovaný scénář IEA pro rok 2019 zahrnuje zařízení diváka, přenos dat i datové centrum. Výsledek se výrazně mění podle obrazovky, připojení a rozlišení. Jde o historickou orientaci, ne o současnou univerzální hodnotu streamování.<sup><a href="#src-22">22</a></sup></p>
+        </div>
+        <div class="card">
+          <div class="chips"><span class="source-chip measure">Recenzovaný model LCA</span><span class="scope-chip">Roční profil používání digitálních služeb</span></div>
+          <div class="split-stat"><b>229 kg CO₂e</b><span>jeden modelový rok používání</span></div>
+          <p class="small">Studie z roku 2024 modelovala 3 230 hodin používání webu, sociálních sítí, videa, hudby a videohovorů pro modelový profil globálního průměrného uživatele. Zahrnula zařízení, sítě i datová centra od těžby surovin po konec životnosti; údaje o chování pocházely z let 2019–2022 a technická data převážně z roku 2020.<sup><a href="#src-21">21</a></sup></p>
+        </div>
+      </div>
+
+      <div class="warning">
+        <p><strong>Tyto tři karty netvoří jednu stupnici.</strong> První ukazuje elektřinu na jeden požadavek, druhá elektřinu za hodinu a třetí emise skleníkových plynů za celý modelový rok včetně životního cyklu. Nelze z nich poctivě odvodit, že jedna činnost „odpovídá“ určitému počtu druhé.</p>
+      </div>
+      <div class="card" style="margin-top:1rem">
+        <h3>Co nám srovnání přesto ukazuje</h3>
+        <p>Digitální dopady nevznikají jen při používání generativní AI a někdy může hrát zařízení uživatele stejně důležitou roli jako vzdálená infrastruktura. Nízká hodnota pro úzce vymezený textový prompt však zároveň nevypovídá o náročných úlohách AI ani o růstu celého systému. Smysluplné posouzení musí nejprve vymezit funkční jednotku a hranici systému. Oba požadavky výslovně uvádí ITU-T L.1801.<sup><a href="#src-17">17</a></sup></p>
+        <p class="small">Dřívější přirovnání k „8,6 sekundy stowattové televize“ je pouze převod 0,24 Wh při pevně zvoleném příkonu 100 W. Nejde o srovnání s hodinou streamovaného videa ani s dopady celého životního cyklu televizoru.</p>
+      </div>
+    </section>
+
+    <section id="hardware" class="reveal">
+      <span class="eyebrow">07 · Trénování a hardware</span>
+      <h2>Stopa nekončí u provozu modelu (<em lang="en">inference</em>)</h2>
+      <p>Úzký údaj o elektřině na jeden požadavek nezahrnuje trénování modelů, výrobu a obměnu serverů ani jejich vyřazení. Někteří poskytovatelé části tohoto obrazu zveřejňují, ale rozsah a způsob započítání se liší.</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="chips"><span class="source-chip provider">Karta modelu od poskytovatele</span></div>
+          <h3>Meta · rodina Llama 3.1</h3>
+          <p>Meta uvádí 39,3 milionu výpočetních hodin na GPU H100 a 11 390 tCO₂e emisí z trénování podle metody založené na lokalitě (<em lang="en">location-based</em>). Tatáž karta modelu uvádí po započtení nákupu elektřiny z obnovitelných zdrojů nulové emise podle metody založené na trhu (<em lang="en">market-based</em>).<sup><a href="#src-10">10</a></sup></p>
+          <p class="small"><strong>Nula podle metody založené na trhu je účetní výsledek, nikoli nulové fyzické emise.</strong> Uvést oba pohledy je informativnější než zvolit ten příznivější.</p>
+        </div>
+        <div class="card">
+          <div class="chips"><span class="source-chip provider">Studie životního cyklu poskytovatele</span></div>
+          <h3>Mistral · zveřejnění posouzení životního cyklu (LCA)</h3>
+          <p>Mistral zveřejnil pro Large 2 a Le Chat ukazatele emisí skleníkových plynů, spotřeby vody a úbytku zdrojů. Studii zároveň označuje za první aproximaci a uvádí, že faktory spojené s výrobou GPU musel odhadnout.<sup><a href="#src-5">5</a></sup></p>
+          <p class="small">Zveřejnění je užitečné právě tím, že přiznává své limity. Neslouží však jako nezávisle naměřený žebříček.</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top:2rem">Vývoj modelu a materiálová náročnost snadno zůstanou mimo záběr</h3>
+      <div class="grid-2" style="margin-top:.8rem">
+        <div class="card">
+          <div class="chips"><span class="source-chip measure">Měřený vývojový program</span><span class="scope-chip">Jedna série modelů</span></div>
+          <h3>Vývoj zahrnuje víc než závěrečný trénink</h3>
+          <p>Studie ICLR 2025 sledovala sérii jazykových modelů od 20 milionů do 13 miliard aktivních parametrů. Po započtení výroby hardwaru, vývoje a závěrečného trénování měl celý program stopu nejméně 493 t CO₂e a spotřeboval nejméně 2,769 milionu litrů vody. Samotný vývoj představoval přibližně polovinu dopadu závěrečného trénování.<sup><a href="#src-16">16</a></sup></p>
+          <p class="small">Jde o jeden vývojový program v jednom datovém centru, nikoli o univerzální násobek pro každý model.</p>
+        </div>
+        <div class="card">
+          <div class="chips"><span class="source-chip measure">Fyzická analýza materiálů</span><span class="scope-chip">Jeden akcelerátor Nvidia A100</span></div>
+          <h3>Specializovaný hardware je materiálový systém</h3>
+          <p>Studie z roku 2026 chemicky analyzovala akcelerátor Nvidia A100 a zjistila přítomnost 32 prvků. Poté vyjádřila, jakou část životnosti hardwaru daný výpočet spotřebuje. Do environmentálního hodnocení tak vstupuje i délka používání zařízení.<sup><a href="#src-18">18</a></sup></p>
+          <p class="small">Analýza zahrnuje pouze GPU. Nezapočítává síťové prvky, úložiště, racky, napájení ani chlazení, a nepředstavuje proto úplnou materiálovou stopu datového centra.</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top:2rem">Odhady elektroodpadu stále silně závisejí na metodě</h3>
+      <div class="grid-2" style="margin-top:.8rem">
+        <div class="card ewaste-card">
+          <div class="ewaste-value">1,2–5,0 milionu t</div>
+          <span class="horizon">KUMULATIVNĚ · 2020–2030</span>
+          <p>Studie v <em>Nature Computational Science</em> z roku 2024 odhadla kumulativní množství elektroodpadu z generativní AI v několika scénářích vývoje.<sup><a href="#src-8">8</a></sup></p>
+          <p class="micro">Jde o hrubý scénářový odhad zaměřený na hardware serverů pro AI, nikoli o přesnou předpověď.</p>
+        </div>
+        <div class="card ewaste-card">
+          <div class="ewaste-value">131,0–224,8 kt/rok</div>
+          <span class="horizon">ROČNĚ · V ROCE 2030</span>
+          <p>Recenzovaná perspektiva z roku 2026 vymezila toto rozpětí na základě výrobní kapacity hardwaru pro AI a předpokládané pětileté životnosti serverů.<sup><a href="#src-9">9</a></sup></p>
+          <p class="micro">Autoři neuvádějí středový odhad; rozpětí závisí na skutečném rozdělení výrobní kapacity technologie CoWoS pro pokročilé pouzdření čipů.</p>
+        </div>
+      </div>
+      <div class="warning"><p><strong>Nevydávejte tato čísla za „desetinásobnou opravu“.</strong> První hodnota sčítá odpad za desetiletí, druhá popisuje jediný rok. Liší se také jejich rozsah a modelové předpoklady.</p></div>
+    </section>
+
+    <section id="rules" class="reveal">
+      <span class="eyebrow">08 · Co pravidla EU skutečně zveřejňují</span>
+      <h2>Vykazování se zlepšuje, veřejný údaj pro každý prompt však stále neexistuje</h2>
+      <div class="grid-2 rules-grid">
+        <div class="card">
+          <div class="chips"><span class="source-chip law">Závazný předpis EU</span></div>
+          <div class="rule-number">≥500 kW</div>
+          <h3>Prahová hodnota pro vykazování datových center</h3>
+          <p>Nařízení (EU) 2024/1364 se vztahuje na datová centra s instalovaným příkonem IT zařízení nejméně 500 kW. Vykazované ukazatele zahrnují energii, využití výkonu, odpadní teplo, vodu a energii z obnovitelných zdrojů.<sup><a href="#src-11">11</a></sup></p>
+          <p class="small">Evropská databáze je veřejná v agregované podobě. Chráněné obchodní informace a odevzdané klíčové ukazatele výkonnosti (KPI) zůstávají důvěrné.</p>
+        </div>
+        <div class="card">
+          <div class="chips"><span class="source-chip law">Akt o AI · příloha XI</span></div>
+          <div class="rule-number">Výpočetní zdroje + energie</div>
+          <h3>Technická dokumentace obecných modelů AI (<span lang="en">general-purpose AI</span>, GPAI)</h3>
+          <p>Příloha XI uvádí výpočetní zdroje, dobu trénování a známou nebo odhadovanou spotřebu energie modelu. Není-li spotřeba známa, lze ji odvodit z údajů o použitých výpočetních zdrojích.<sup><a href="#src-12">12</a></sup></p>
+          <p class="small">Jde o technickou dokumentaci modelu. Neznamená to, že každý uživatel získá veřejný údaj o stopě konkrétního produktu pro každý požadavek.</p>
+        </div>
+      </div>
+      <div class="card" style="margin-top:1rem">
+        <div class="chips"><span class="source-chip law">Plán Evropské komise</span><span class="scope-chip">Připravuje se – nejde o platný štítek</span></div>
+        <div class="rule-number">2026 → 2027</div>
+        <h3>Plánuje se širší systém hodnocení datových center</h3>
+        <p>Plán Komise z června 2026 počítá s přijetím systému hodnocení energetické účinnosti, hospodaření s vodou, využití čisté energie, odpadního tepla a flexibility v roce 2026. První štítky mají následovat v roce 2027.<sup><a href="#src-20">20</a></sup></p>
+        <p class="small">Dokument stanovuje politický harmonogram. Sám není předpisem, který by systém hodnocení zavedl, a nelze jej popisovat jako štítek již dostupný uživatelům.</p>
+      </div>
+    </section>
+
+    <section id="czech" class="reveal">
+      <span class="eyebrow">09 · Český kontext</span>
+      <h2>Místní infrastruktura nedokazuje, kudy jsou požadavky směrovány</h2>
+      <div class="card">
+        <div class="chips"><span class="source-chip provider">Oznámení veřejné instituce</span><span class="scope-chip">Oznámení projektu – nikoli důkaz směrování požadavků</span></div>
+        <p>IT4Innovations oznámilo oficiální zahájení projektu Czech AI Factory dne 12. května 2026. Oznámení uvádí rozpočet téměř 1 miliardu Kč; přibližně polovina má podpořit pořízení a provoz superpočítače KarolAIna.<sup><a href="#src-13">13</a></sup></p>
+        <p class="small">Oznámení potvrzuje český projekt veřejné infrastruktury. Neříká však, kde byl zpracován požadavek odeslaný běžnému komerčnímu chatbotu. Seznam regionálních cloudových služeb ani národní projekt AI nenahradí údaje o směrování konkrétní služby.</p>
+      </div>
+    </section>
+
+    <section id="actions" class="reveal">
+      <span class="eyebrow">10 · Co dává smysl i při nejistotě</span>
+      <h2>Omezujte zbytečnou spotřebu a požadujte lepší data</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Pro jednotlivou úlohu</h3>
+          <ul class="action-list">
+            <li>Použijte nejméně náročný režim, který danou úlohu zvládne.</li>
+            <li>Řešení problémů se zapnutým režimem usuzování, video a úlohy prováděné AI agenty si ponechte pro případy, kdy jejich přidanou schopnost skutečně potřebujete.</li>
+            <li>Vstupní kontext i požadovaný výstup držte jen tak dlouhé, jak úloha vyžaduje.</li>
+            <li>Dobrý výsledek raději znovu použijte, než abyste jej bezdůvodně generovali znovu.</li>
+          </ul>
+          <p class="micro">Tato doporučení vycházejí z naměřených rozdílů mezi úlohami a délkou výstupu; neslibují pevně danou procentní úsporu.<sup><a href="#src-1">1</a></sup><sup><a href="#src-3">3</a></sup></p>
+        </div>
+        <div class="card">
+          <h3>Pro instituci</h3>
+          <ul class="action-list">
+            <li>Využití sledujte podle typu úlohy a výstupu, nikoli jen podle počtu „promptů“.</li>
+            <li>Emise podle metody založené na lokalitě a podle metody založené na trhu vykazujte odděleně.</li>
+            <li>Požadujte údaje o odběru i spotřebě vody pro relevantní hranice systému.</li>
+            <li>Při nákupu zohledněte životnost hardwaru, možnosti opětovného využití a plán jeho vyřazení.</li>
+          </ul>
+          <p class="micro">I poctivá a transparentní odpověď může být nejistá. Bez těchto údajů však nelze spolehlivě srovnávat.</p>
+        </div>
+      </div>
+
+      <div class="rulecard card" style="margin-top:1rem">
+        <h3>Šest údajů, které má smysl požadovat od poskytovatele</h3>
+        <div class="procure">
+          <div><b>Úloha</b><p class="micro">Vstup, výstup a režim</p></div>
+          <div><b>Systém</b><p class="micro">Model a systém obsluhy</p></div>
+          <div><b>Hranice</b><p class="micro">Co je započítáno</p></div>
+          <div><b>Místo</b><p class="micro">Elektrizační soustava a místní vodní zdroje</p></div>
+          <div><b>Datum</b><p class="micro">Období měření</p></div>
+          <div><b>Důkaz</b><p class="micro">Měření, srovnávací test, model nebo LCA</p></div>
+        </div>
+        <p class="micro" style="margin-top:.8rem">Tento požadavek odpovídá doporučení ITU-T L.1801: srovnání potřebuje jednoznačnou funkční jednotku, výslovné hranice systému a údaje o životním cyklu, nikoli souhrnnou hodnotu bez popisu.<sup><a href="#src-17">17</a></sup></p>
+      </div>
+    </section>
+
+    <section id="quiz" class="reveal">
+      <span class="eyebrow">11 · Kontrola tvrzení</span>
+      <h2>Obstojí tvrzení i s nezbytným kontextem?</h2>
+
+      <div class="qcard" data-answer="unsupported">
+        <blockquote>„Jeden AI prompt spotřebuje 0,24 Wh.“</blockquote>
+        <div class="qopts"><button type="button" data-choice="supported">Tvrzení platí</button><button type="button" data-choice="unsupported">Chybí podstatný kontext</button></div>
+        <div class="qreveal"><strong>Chybí kontext.</strong> Hodnota patří k mediánu textových promptů v Gemini Apps v květnu 2025 a k metodě, kterou Google vymezil pro celý systém obsluhy. Nejde o univerzální konstantu jednoho promptu.</div>
+      </div>
+
+      <div class="qcard" data-answer="unsupported">
+        <blockquote>„AI spotřebovala v roce 2025 celkem 485 TWh elektřiny.“</blockquote>
+        <div class="qopts"><button type="button" data-choice="supported">Tvrzení platí</button><button type="button" data-choice="unsupported">Chybí podstatný kontext</button></div>
+        <div class="qreveal"><strong>Chybná kategorie.</strong> Hodnota IEA 485 TWh zahrnuje všechna datová centra. Datová centra zaměřená na AI tvoří pouze jejich část.</div>
+      </div>
+
+      <div class="qcard" data-answer="unsupported">
+        <blockquote>„Žádný poskytovatel nikdy nezveřejnil výpočetní náročnost trénování ani jeho emise.“</blockquote>
+        <div class="qopts"><button type="button" data-choice="supported">Tvrzení platí</button><button type="button" data-choice="unsupported">Nepravdivé absolutní tvrzení</button></div>
+        <div class="qreveal"><strong>Nepravdivé absolutní tvrzení.</strong> Karta modelu Llama 3.1 společnosti Meta uvádí výpočetní hodiny na GPU i emise podle metody založené na lokalitě a na trhu. Oprávněná kritika zní, že zveřejňování je stále nerovnoměrné a nestandardizované.</div>
+      </div>
+
+      <div class="qcard" data-answer="unsupported">
+        <blockquote>„Hodnota 45 ml u Mistralu znamená, že jeho odpověď spotřebuje asi 173krát více vody než 0,26 ml u Googlu.“</blockquote>
+        <div class="qopts"><button type="button" data-choice="supported">Tvrzení platí</button><button type="button" data-choice="unsupported">Neplatné srovnání</button></div>
+        <div class="qreveal"><strong>Neplatné srovnání.</strong> Liší se služby, úlohy, metody, data i hranice započítání vody. Aritmetika nedokáže napravit nesrovnatelné jmenovatele.</div>
+      </div>
+
+      <div class="qcard" data-answer="unsupported">
+        <blockquote>„Pokud je každá úloha efektivnější, celková poptávka po elektřině musí klesat.“</blockquote>
+        <div class="qopts"><button type="button" data-choice="supported">Tvrzení platí</button><button type="button" data-choice="unsupported">Ve velkém měřítku závěr neplatí</button></div>
+        <div class="qreveal"><strong>Ve velkém měřítku závěr neplatí.</strong> IEA uvádí rychlý růst efektivity jednotlivých úloh současně se 17% zvýšením celkové spotřeby elektřiny datových center během roku 2025.</div>
+      </div>
+      <p class="qscore" id="qscore" aria-live="polite"></p>
+    </section>
+
+    <section id="verdict" class="reveal">
+      <span class="eyebrow">Závěr</span>
+      <h2>Poctivá odpověď závisí na kontextu – není to vyhýbání</h2>
+      <div class="kicker">
+        <p><strong>Používání AI má environmentální dopady a „jeden prompt“ není obhajitelná jednotka jejich měření.</strong> V konkrétním produkčním měření může být dopad krátkého textového požadavku malý. Řešení problémů v režimu usuzování, video a úlohy prováděné AI agenty však mohou být mnohem náročnější. V celkovém měřítku proto rozhoduje také rychlost, s jakou roste používání AI a potřebná infrastruktura.</p>
+      </div>
+      <p>Praktickou odpovědí není ani pocit viny za každý užitečný dotaz, ani lhostejnost k celkovému měřítku. Volte nástroj a režim podle úlohy, vyhýbejte se zbytečně náročným výpočtům a od poskytovatelů i institucí požadujte údaje o úloze, systému, hranici, místě, datu a metodě.</p>
+      <p>Hranice systému musí sahat také za serverovnu. Výroba hardwaru, zábor půdy, zatížení vodních zdrojů, dodávky elektřiny i vyřazování zařízení probíhají na konkrétních místech. Dopady přitom mohou nést jiné komunity než ty, které získají většinu přínosů.<sup><a href="#src-16">16</a></sup><sup><a href="#src-18">18</a></sup><sup><a href="#src-19">19</a></sup></p>
+    </section>
+
+    <section id="evidence" class="reveal">
+      <span class="eyebrow">Zdroje a metodika</span>
+      <h2>Odkud čísla pocházejí</h2>
+      <p>Stránka vychází z měření v produkčním provozu, kontrolovaných srovnávacích testů (benchmarků), modelových studií, posouzení životního cyklu, oficiálních statistik a právních předpisů EU. Firemní studie používáme pouze pro tvrzení o systémech dané společnosti a jejich původ vždy uvádíme. Nerecenzované rukopisy (preprinty) a projekce jsou zřetelně označeny. Jde o zdrojově doložený výklad, ne o systematický přehled ani nezávislé posouzení životního cyklu.</p>
+
+      <ol class="source-list">
+        <li id="src-1"><b>IEA (2026), <em>Key Questions on Energy and AI</em>.</b> Oficiální mezivládní zpráva, zveřejněná 16. dubna 2026. <a href="https://www.iea.org/reports/key-questions-on-energy-and-ai" target="_blank" rel="noopener noreferrer">Zpráva a shrnutí ↗</a></li>
+        <li id="src-2"><b>Elsworth et al. (2025), <em>Measuring the environmental impact of delivering AI at Google Scale</em>.</b> Preprint na arXiv zpracovaný poskytovatelem, založený na měření v produkčním provozu. <a href="https://arxiv.org/abs/2508.15734" target="_blank" rel="noopener noreferrer">Záznam arXiv ↗</a></li>
+        <li id="src-3"><b>Chung et al. (2026), <em>Where Do the Joules Go?</em></b> Empirický srovnávací test ML.ENERGY; preprint na arXiv revidovaný 30. ledna 2026. <a href="https://arxiv.org/abs/2601.22076" target="_blank" rel="noopener noreferrer">Záznam arXiv ↗</a></li>
+        <li id="src-4"><b>Li et al. (2025), <em>Making AI Less “Thirsty”</em>.</b> Recenzované modelování vodní stopy publikované v <em>Communications of the ACM</em>, 68(7), 54–61. <a href="https://doi.org/10.1145/3724499" target="_blank" rel="noopener noreferrer">Záznam vydavatele ↗</a></li>
+        <li id="src-5"><b>Mistral AI (2025), <em>Our contribution to a global environmental standard for AI</em>.</b> Studie životního cyklu poskytovatele vypracovaná se společnostmi Carbone 4 a ADEME a posouzená dvěma poradenskými společnostmi. <a href="https://mistral.ai/news/our-contribution-to-a-global-environmental-standard-for-ai/" target="_blank" rel="noopener noreferrer">Zpráva poskytovatele ↗</a></li>
+        <li id="src-6"><b>Lawrence Berkeley National Laboratory (2026), <em>United States Data Center Energy Usage Report: 2025 Update</em>.</b> Scénáře národní laboratoře modelované metodou zdola nahoru (<em lang="en">bottom-up</em>); DOI 10.71468/P1RP4F. <a href="https://eta-publications.lbl.gov/publications/united-states-data-center-energy-2025" target="_blank" rel="noopener noreferrer">Oficiální záznam ↗</a></li>
+        <li id="src-7"><b>Central Statistics Office Ireland (2026), <em>Data Centres Metered Electricity Consumption 2025</em>.</b> Oficiální statistika zveřejněná 7. července 2026. <a href="https://www.cso.ie/en/releasesandpublications/ep/p-dcmec/datacentresmeteredelectricityconsumption2025/" target="_blank" rel="noopener noreferrer">Statistická zpráva ↗</a></li>
+        <li id="src-8"><b>Wang et al. (2024), <em>E-waste challenges of generative artificial intelligence</em>.</b> Recenzované stručné sdělení; plná publikovaná verze byla ověřena z autorské kopie zveřejněné na webu domovské instituce autorů. <a href="https://doi.org/10.1038/s43588-024-00712-6" target="_blank" rel="noopener noreferrer">Záznam vydavatele ↗</a></li>
+        <li id="src-9"><b>de Vries-Gao (2026), <em>Recalibrating global artificial intelligence e-waste estimates</em>.</b> Recenzovaná perspektiva s otevřeným přístupem pod licencí CC BY; plná publikovaná verze byla ověřena. <a href="https://doi.org/10.1016/j.resconrec.2026.108872" target="_blank" rel="noopener noreferrer">Záznam DOI ↗</a></li>
+        <li id="src-10"><b>Meta (2024), karta modelu Llama 3.1.</b> Údaje poskytovatele o výpočetní náročnosti trénování a vykazování emisí. <a href="https://huggingface.co/meta-llama/Llama-3.1-405B-Instruct" target="_blank" rel="noopener noreferrer">Karta modelu ↗</a></li>
+        <li id="src-11"><b>Nařízení Komise v přenesené pravomoci (EU) 2024/1364.</b> Vykazování udržitelnosti datových center a příslušná metodika. <a href="https://eur-lex.europa.eu/eli/reg_del/2024/1364/oj/eng" target="_blank" rel="noopener noreferrer">EUR-Lex ↗</a></li>
+        <li id="src-12"><b>Nařízení (EU) 2024/1689, příloha XI.</b> Oblasti technické dokumentace pro AI pro obecné účely. <a href="https://ai-act-service-desk.ec.europa.eu/en/ai-act/annex-11" target="_blank" rel="noopener noreferrer">Služba EK k Aktu o AI ↗</a></li>
+        <li id="src-13"><b>IT4Innovations (2026), oznámení o zahájení Czech AI Factory.</b> Oznámení veřejné instituce ze dne 12. května 2026. <a href="https://www.it4i.cz/en/about/infoservice/press-releases/czech-ai-factory-launches-czechia-introduces-its-own-ai-services-and-supercomputing-infrastructure" target="_blank" rel="noopener noreferrer">Oficiální oznámení ↗</a></li>
+        <li id="src-14"><b>Shehabi et al. (2024), <em>2024 United States Data Center Energy Usage Report</em>.</b> Oficiální zpráva Lawrence Berkeley National Laboratory, zde použitá pro odhady přímé spotřeby vody a spotřeby spojené s výrobou elektřiny. <a href="https://eta-publications.lbl.gov/publications/2024-lbnl-data-center-energy-usage-report" target="_blank" rel="noopener noreferrer">Oficiální záznam ↗</a></li>
+        <li id="src-15"><b>Xiao et al. (2025), <em>Environmental impact and net-zero pathways for sustainable artificial intelligence servers in the USA</em>.</b> Recenzovaná scénářová analýza s otevřeným přístupem v <em>Nature Sustainability</em>. <a href="https://www.nature.com/articles/s41893-025-01681-y" target="_blank" rel="noopener noreferrer">Článek vydavatele ↗</a></li>
+        <li id="src-16"><b>Morrison et al. (2025), <em>Holistically Evaluating the Environmental Impact of Creating Language Models</em>.</b> Recenzovaný konferenční příspěvek ICLR a případová studie měřeného vývojového programu. <a href="https://proceedings.iclr.cc/paper_files/paper/2025/hash/b76105b94a8c1286c860ad885ec588f1-Abstract-Conference.html" target="_blank" rel="noopener noreferrer">Záznam konference ↗</a></li>
+        <li id="src-17"><b>ITU-T L.1801 (2026), <em>Guidelines for assessing the environmental impact of artificial intelligence systems</em>.</b> Platné mezinárodní doporučení založené na posouzení životního cyklu. <a href="https://www.itu.int/rec/T-REC-L.1801/en" target="_blank" rel="noopener noreferrer">Záznam ITU ↗</a></li>
+        <li id="src-18"><b>Falk et al. (2026), <em>From computation to environmental cost: the resource burden of artificial intelligence</em>.</b> Recenzovaná analýza materiálové stopy s otevřeným přístupem v <em>Communications Earth &amp; Environment</em>. <a href="https://www.nature.com/articles/s43247-026-03537-5" target="_blank" rel="noopener noreferrer">Článek vydavatele ↗</a></li>
+        <li id="src-19"><b>Aczel et al. / UNU-INWEH (2026), <em>Environmental Cost of AI's Energy Use: Carbon, Water and Land Footprints</em>.</b> Úplná výzkumná zpráva Univerzity OSN. <a href="https://unu.edu/inweh/collection/environmental-cost-of-AIs-Enrgy-Use-Carbon-water-and-land-footprints" target="_blank" rel="noopener noreferrer">Oficiální stránka zprávy ↗</a></li>
+        <li id="src-20"><b>Evropská komise (2026), <em>Strategic Roadmap for Digitalisation and AI in the Energy Sector</em>.</b> Oficiální sdělení, které vymezuje plánovaný harmonogram hodnocení datových center. <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:52026DC0501" target="_blank" rel="noopener noreferrer">EUR-Lex ↗</a></li>
+        <li id="src-21"><b>Istrate et al. (2024), <em>The environmental sustainability of digital content consumption</em>.</b> Recenzované otevřeně dostupné posouzení životního cyklu v časopise <em>Nature Communications</em>; globální průměrný uživatel je modelový profil, nikoli měření každého člověka. <a href="https://doi.org/10.1038/s41467-024-47621-w" target="_blank" rel="noopener noreferrer">Záznam vydavatele ↗</a></li>
+        <li id="src-22"><b>Kamiya / IEA (2020), <em>The carbon footprint of streaming video: fact-checking the headlines</em>.</b> Oficiální analýza IEA aktualizovaná 10. prosince 2020; uvedený energetický odhad popisuje scénář sledování z roku 2019 a slouží pouze k historické orientaci. <a href="https://www.iea.org/commentaries/the-carbon-footprint-of-streaming-video-fact-checking-the-headlines" target="_blank" rel="noopener noreferrer">Analýza IEA ↗</a></li>
+      </ol>
+
+      <details>
+        <summary>Metody a omezení</summary>
+        <div class="inside">
+          <p>Každé číselné, právní a souhrnné tvrzení jsme ověřili v citovaném zdroji. Plné texty jsme měli k dispozici také u nově doplněných prací o vodě, vývoji modelů, metodice, materiálové stopě, elektroodpadu, širším používání digitálních služeb i u zprávy UNU-INWEH.</p>
+          <p>Odlišné metody, hranice a časové horizonty uvádíme přímo u hodnot. Měření, modelované odhady, studie poskytovatelů a projekce proto nepovažujeme za zaměnitelné. Úplná zpráva UNU-INWEH podporuje kvalitativní tvrzení o půdě a nerovnoměrném rozložení dopadů; souhrnné údaje a případové příklady však nedokládají stejný dopad na každou hostitelskou komunitu.</p>
+        </div>
+      </details>
+    </section>
+
+    <footer>
+      <p><strong>Aktualizováno 19. července 2026.</strong> Údaje odpovídají datům uvedeným ve zdrojích a s lepším vykazováním se mohou měnit. Tento přehled vznikl s pomocí AI a pod lidským redakčním vedením; neprošel nezávislou externí vědeckou recenzí.</p>
+    </footer>
+  </main>
+
+  <script>
+    (() => {
+      const lensCopy = {
+        task: ['Jaká úloha byla provedena?', 'Krátká textová odpověď, syntéza dlouhého kontextu, řešení problémů, obraz, video nebo úloha prováděná AI agentem s několika nástroji nejsou totéž. Bez dalšího je proto nelze srovnávat.'],
+        system: ['Který systém úlohu provedl?', 'Spotřebu stejného typu úlohy může změnit velikost a architektura modelu, hardware, dávkové zpracování, míra využití i software pro obsluhu požadavků.'],
+        boundary: ['Co bylo započítáno?', 'Samotný akcelerátor, celý server, nevyužitá kapacita, režie datového centra, výroba elektřiny, voda a výroba hardwaru představují postupně širší hranice započítání.'],
+        location: ['Kde výpočet proběhl?', 'Emise elektrizační soustavy, způsob chlazení, počasí i zatížení místních vodních zdrojů se liší podle místa. Nákupy elektřiny zohledněné metodou založenou na trhu a fyzická skladba sítě zachycená metodou založenou na lokalitě odpovídají na jiné otázky.'],
+        date: ['Kdy proběhlo měření?', 'Hardware i software pro AI se rychle mění. Aktuální medián z produkčního provozu nelze bez vysvětlení spojovat se starším modelem nebo s budoucí sektorovou projekcí.'],
+        evidence: ['Jak byl výsledek získán?', 'Produkční měření, kontrolovaný srovnávací test, modelový odhad, studie životního cyklu poskytovatele i sektorový výhled mohou být užitečné, ale každý z nich podporuje jiný typ tvrzení.']
+      };
+      const lensPanel = document.getElementById('lens-panel');
+      document.querySelectorAll('[data-lens]').forEach(button => {
+        button.addEventListener('click', () => {
+          document.querySelectorAll('[data-lens]').forEach(other => other.setAttribute('aria-pressed', String(other === button)));
+          const [title, text] = lensCopy[button.dataset.lens];
+          lensPanel.innerHTML = `<h3>${title}</h3><p>${text}</p>`;
+        });
+      });
+
+      const taskData = {
+        conversation: { value: 95, width: 4.34, label: 'Textová konverzace · na jednu odpověď', note: 'Výchozí hodnota pro srovnání těchto dvou úloh.', colour: 'var(--teal)' },
+        reasoning: { value: 2192, width: 100, label: 'Řešení problémů · na jednu odpověď', note: 'V tomto benchmarku stejného modelu přibližně 23× více než konverzační odpověď.', colour: 'var(--amber)' }
+      };
+      const taskNumber = document.getElementById('task-number');
+      const taskFill = document.getElementById('task-fill');
+      const taskRatio = document.getElementById('task-ratio');
+      document.querySelectorAll('[data-task]').forEach(button => {
+        button.addEventListener('click', () => {
+          document.querySelectorAll('[data-task]').forEach(other => other.setAttribute('aria-pressed', String(other === button)));
+          const item = taskData[button.dataset.task];
+          taskNumber.innerHTML = `${item.value.toLocaleString('cs-CZ')} J<span>${item.label}</span>`;
+          taskFill.style.width = `${item.width}%`;
+          taskFill.style.background = item.colour;
+          taskRatio.textContent = item.note;
+        });
+      });
+
+      let answered = 0;
+      let correct = 0;
+      const cards = [...document.querySelectorAll('.qcard')];
+      const score = document.getElementById('qscore');
+      cards.forEach(card => {
+        card.querySelectorAll('[data-choice]').forEach(button => {
+          button.addEventListener('click', () => {
+            if (card.dataset.done === 'true') return;
+            card.dataset.done = 'true';
+            answered += 1;
+            const isCorrect = button.dataset.choice === card.dataset.answer;
+            if (isCorrect) correct += 1;
+            card.querySelectorAll('[data-choice]').forEach(option => {
+              option.disabled = true;
+              if (option.dataset.choice === card.dataset.answer) option.classList.add('answer');
+            });
+            button.classList.add(isCorrect ? 'right' : 'wrong');
+            card.querySelector('.qreveal').classList.add('show');
+            if (answered === cards.length) {
+              score.textContent = `Správně jste vyhodnotili ${correct} z ${cards.length} tvrzení.`;
+              score.classList.add('show');
+            }
+          });
+        });
+      });
+
+      const reveals = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('in');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+        reveals.forEach(item => observer.observe(item));
+      } else {
+        reveals.forEach(item => item.classList.add('in'));
+      }
+      // Animation must never become a content-access gate if observation is delayed.
+      window.setTimeout(() => reveals.forEach(item => item.classList.add('in')), 900);
+    })();
+  </script>
+</body>
+</html>

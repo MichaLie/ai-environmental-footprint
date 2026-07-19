@@ -1,0 +1,878 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI has a footprint. A prompt does not have one number.</title>
+  <meta name="description" content="A 2026 explainer of AI energy, water, carbon, material, land and hardware impacts, with measurement boundaries and uncertainty kept visible.">
+  <link rel="alternate" hreflang="en" href="index.html">
+  <link rel="alternate" hreflang="cs" href="cs.html">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20100%20100'%3E%3Ctext%20y%3D'0.9em'%20font-size%3D'90'%3E%F0%9F%8C%B1%3C%2Ftext%3E%3C%2Fsvg%3E">
+  <script>document.documentElement.classList.add('js');</script>
+  <style>
+    :root {
+      --paper: #f3f6f4;
+      --surface: #ffffff;
+      --ink: #17211f;
+      --muted: #56645f;
+      --faint: #66736e;
+      --line: #d8e1dd;
+      --line-soft: #e8eeeb;
+      --teal: #096b61;
+      --teal-dark: #07544d;
+      --teal-tint: #e9f4f1;
+      --amber: #9d5700;
+      --amber-tint: #faf1e2;
+      --amber-line: #ead1aa;
+      --blue: #126d9e;
+      --blue-tint: #eaf4f9;
+      --rose: #9a4e54;
+      --rose-tint: #f8edee;
+      --chip: #edf2ef;
+      --grid: #e5ebe8;
+      --shadow: 0 18px 46px rgba(29, 53, 47, 0.07);
+      --serif: "Charter", "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+      --sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --mono: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 9% 3%, color-mix(in srgb, var(--teal) 8%, transparent), transparent 27rem),
+        var(--paper);
+      color: var(--ink);
+      font-family: var(--serif);
+      font-size: 17px;
+      line-height: 1.65;
+    }
+    a { color: var(--teal-dark); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    a:hover { text-decoration-thickness: 2px; }
+    button, input { font: inherit; }
+    a:focus-visible, button:focus-visible, summary:focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--teal) 70%, white);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+    h1, h2, h3 { line-height: 1.13; text-wrap: balance; }
+    h1 { font-size: clamp(2.65rem, 7vw, 4.6rem); letter-spacing: -0.035em; margin: 0; font-weight: 650; }
+    h2 { font-size: clamp(1.85rem, 4.5vw, 2.55rem); letter-spacing: -0.022em; margin: 0 0 1rem; font-weight: 650; }
+    h3 { font-size: 1.08rem; margin: 0 0 0.5rem; font-weight: 700; }
+    p { margin: 0 0 1rem; }
+    ul, ol { margin-top: 0.5rem; }
+    section { scroll-margin-top: 2rem; margin-top: 6.5rem; }
+    .page { width: min(100% - 2rem, 50rem); margin: 0 auto; padding-bottom: 5rem; }
+    .wide { width: min(100% - 2rem, 64rem); margin-left: auto; margin-right: auto; }
+
+    .eyebrow {
+      display: block;
+      margin-bottom: 0.65rem;
+      color: var(--teal-dark);
+      font: 750 0.71rem/1.2 var(--sans);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .lede { color: var(--muted); font-size: 1.14rem; max-width: 42rem; }
+    .small { color: var(--muted); font: 0.82rem/1.55 var(--sans); }
+    .micro { color: var(--faint); font: 0.74rem/1.5 var(--sans); }
+    .nowrap { white-space: nowrap; }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+    }
+
+    .language-switch {
+      position: fixed; z-index: 20; right: 1rem; top: 1rem;
+      border: 1px solid var(--line); border-radius: 999px; padding: 0.45rem 0.75rem;
+      background: color-mix(in srgb, var(--surface) 88%, transparent); color: var(--ink);
+      backdrop-filter: blur(10px); font: 700 0.78rem var(--sans);
+      box-shadow: var(--shadow); text-decoration: none;
+    }
+    .language-switch:hover { border-color: var(--teal); color: var(--teal-dark); }
+
+    .hero { padding: 6.7rem 0 2rem; }
+    .hero .standfirst { max-width: 44rem; margin-top: 1.45rem; color: var(--muted); font-size: 1.25rem; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 0.65rem; margin: 1.8rem 0 0; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      border: 1px solid var(--line); border-radius: 999px; padding: 0.58rem 1rem;
+      background: var(--surface); color: var(--ink); text-decoration: none;
+      cursor: pointer; font: 700 0.86rem var(--sans);
+    }
+    .btn.primary { background: var(--teal); border-color: var(--teal); color: #fff; }
+    .btn:hover { border-color: var(--teal); }
+
+    .toc {
+      display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0;
+      padding: 0.8rem 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    }
+    .toc a {
+      padding: 0.22rem 0.58rem; border-radius: 999px; color: var(--muted);
+      text-decoration: none; font: 600 0.75rem var(--sans);
+    }
+    .toc a:hover { color: var(--teal-dark); background: var(--chip); }
+
+    .card {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+      padding: 1.2rem 1.3rem; box-shadow: var(--shadow);
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    @media (max-width: 720px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+    .kicker {
+      margin: 1.4rem 0; padding: 1rem 1.15rem; border-left: 4px solid var(--teal);
+      border-radius: 0 10px 10px 0; background: var(--teal-tint);
+    }
+    .kicker p:last-child { margin-bottom: 0; }
+    .warning {
+      margin: 1.4rem 0; padding: 1rem 1.15rem;
+      border: 1px solid var(--amber-line); border-radius: 10px; background: var(--amber-tint);
+    }
+    .warning strong { color: var(--amber); }
+
+    .source-chip, .scope-chip {
+      display: inline-flex; align-items: center; border: 1px solid var(--line-soft);
+      border-radius: 999px; padding: 0.16rem 0.52rem; background: var(--chip);
+      color: var(--muted); font: 700 0.67rem var(--sans); letter-spacing: 0.02em;
+    }
+    .source-chip.measure { color: var(--teal-dark); background: var(--teal-tint); }
+    .source-chip.model { color: var(--amber); background: var(--amber-tint); }
+    .source-chip.law { color: var(--blue); background: var(--blue-tint); }
+    .source-chip.provider { color: var(--rose); background: var(--rose-tint); }
+    .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.8rem; }
+    sup a { text-decoration: none; font: 750 0.68rem var(--sans); padding: 0 0.08rem; }
+
+    .lens-tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.25rem 0 0.85rem; }
+    .lens-tabs button, .switch button {
+      border: 1px solid var(--line); border-radius: 999px; padding: 0.46rem 0.85rem;
+      background: var(--chip); color: var(--muted); cursor: pointer;
+      font: 700 0.78rem var(--sans);
+    }
+    .lens-tabs button[aria-pressed="true"], .switch button[aria-pressed="true"] {
+      color: #fff; background: var(--teal); border-color: var(--teal);
+    }
+    .lens-panel { min-height: 7.6rem; }
+    .lens-panel h3 { margin-bottom: 0.4rem; }
+    .lens-panel p { margin-bottom: 0; color: var(--muted); }
+
+    .evidence-key { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.6rem; margin-top: 1.2rem; }
+    .evidence-key div { padding: 0.75rem; border-top: 3px solid var(--line); background: var(--surface); border-radius: 0 0 8px 8px; }
+    .evidence-key div:nth-child(1) { border-color: var(--teal); }
+    .evidence-key div:nth-child(2) { border-color: var(--blue); }
+    .evidence-key div:nth-child(3) { border-color: var(--amber); }
+    .evidence-key div:nth-child(4) { border-color: var(--rose); }
+    .evidence-key div:nth-child(5) { border-color: var(--faint); }
+    .evidence-key b { display: block; font: 700 0.76rem var(--sans); }
+    .evidence-key span { display: block; margin-top: 0.2rem; color: var(--faint); font: 0.67rem/1.35 var(--sans); }
+    @media (max-width: 760px) { .evidence-key { grid-template-columns: 1fr 1fr; } }
+
+    .bignum-row { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin: 1.4rem 0; }
+    .bignum { font: 780 clamp(3.4rem, 11vw, 6rem)/0.9 var(--sans); letter-spacing: -0.055em; color: var(--teal-dark); }
+    .bignum span { margin-left: 0.2em; color: var(--muted); font-size: 0.32em; letter-spacing: -0.01em; }
+    .bignum-note { max-width: 22rem; color: var(--muted); font: 0.84rem/1.5 var(--sans); }
+
+    .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin: 1rem 0; }
+    .metric { padding: 1rem; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+    .metric .value { font: 760 1.55rem var(--sans); letter-spacing: -0.02em; }
+    .metric .label { color: var(--faint); font: 0.7rem/1.35 var(--sans); text-transform: uppercase; letter-spacing: 0.08em; }
+    .metric .note { margin-top: 0.35rem; color: var(--muted); font: 0.74rem/1.4 var(--sans); }
+    @media (max-width: 620px) { .metric-grid { grid-template-columns: 1fr; } }
+
+    .stack-wrap { margin-top: 1.2rem; }
+    .stack { display: flex; height: 28px; overflow: hidden; border: 1px solid var(--line); border-radius: 7px; background: var(--chip); }
+    .stack span:nth-child(1) { width: 58.33%; background: var(--teal); }
+    .stack span:nth-child(2) { width: 25%; background: var(--blue); }
+    .stack span:nth-child(3) { width: 8.33%; background: var(--amber); }
+    .stack span:nth-child(4) { width: 8.34%; background: var(--rose); }
+    .stack-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem 1rem; margin-top: 0.7rem; }
+    .stack-legend span { color: var(--muted); font: 0.74rem var(--sans); }
+    .dot { display: inline-block; width: 0.68rem; height: 0.68rem; margin-right: 0.35rem; border-radius: 2px; vertical-align: -0.03rem; }
+
+    .task-viz { display: grid; grid-template-columns: 11rem 1fr; gap: 1.4rem; align-items: center; }
+    .task-number { font: 780 2.8rem/1 var(--sans); letter-spacing: -0.04em; }
+    .task-number span { display: block; margin-top: 0.35rem; color: var(--muted); font: 0.72rem/1.4 var(--sans); letter-spacing: 0; }
+    .task-track { position: relative; height: 22px; overflow: hidden; border-radius: 6px; background: var(--chip); }
+    .task-fill { height: 100%; min-width: 4%; border-radius: 6px; background: var(--teal); transition: width 0.35s ease, background 0.35s ease; }
+    .task-ratio { margin-top: 0.55rem; color: var(--muted); font: 0.77rem/1.45 var(--sans); }
+    @media (max-width: 620px) { .task-viz { grid-template-columns: 1fr; } }
+
+    .water-flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7rem; margin: 1.2rem 0; }
+    .water-step { position: relative; padding: 1rem; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+    .water-step:not(:last-child)::after { content: "→"; position: absolute; right: -0.62rem; top: 50%; z-index: 2; color: var(--blue); font: 750 1rem var(--sans); }
+    .water-step b { display: block; color: var(--blue); font: 750 0.82rem var(--sans); }
+    .water-step span { display: block; margin-top: 0.25rem; color: var(--muted); font: 0.75rem/1.4 var(--sans); }
+    @media (max-width: 680px) {
+      .water-flow { grid-template-columns: 1fr; }
+      .water-step:not(:last-child)::after { content: "↓"; right: 50%; top: auto; bottom: -0.78rem; }
+    }
+    .water-card { border-top: 4px solid var(--blue); }
+    .water-value { color: var(--blue); font: 780 2rem/1.1 var(--sans); letter-spacing: -0.03em; }
+    .water-card h3 { margin-top: 0.5rem; }
+    .no-equation { text-align: center; padding: 1rem; color: var(--rose); font: 760 clamp(1.25rem, 4vw, 2rem) var(--mono); }
+
+    .bars { margin: 1.2rem 0 0.5rem; }
+    .bar-row { display: grid; grid-template-columns: 5.2rem 1fr 5.6rem; align-items: center; gap: 0.7rem; margin: 0.75rem 0; }
+    .bar-label { font: 700 0.78rem var(--sans); }
+    .bar-track { height: 26px; border-radius: 6px; background: var(--chip); overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 6px; background: var(--teal); }
+    .bar-fill.projected { background: repeating-linear-gradient(135deg, var(--amber), var(--amber) 8px, color-mix(in srgb, var(--amber) 72%, var(--surface)) 8px, color-mix(in srgb, var(--amber) 72%, var(--surface)) 15px); }
+    .bar-value { text-align: right; font: 760 0.83rem var(--sans); }
+
+    .split-stat { display: flex; align-items: baseline; gap: 0.55rem; margin-bottom: 0.4rem; }
+    .split-stat b { font: 780 2.2rem var(--sans); letter-spacing: -0.04em; color: var(--teal-dark); }
+    .split-stat span { color: var(--muted); font: 0.75rem/1.3 var(--sans); }
+
+    .ewaste-card:first-child { border-top: 4px solid var(--amber); }
+    .ewaste-card:last-child { border-top: 4px solid var(--rose); }
+    .ewaste-value { font: 780 1.75rem/1.05 var(--sans); letter-spacing: -0.035em; }
+    .horizon { display: inline-block; margin: 0.5rem 0 0.7rem; border-radius: 5px; padding: 0.2rem 0.45rem; background: var(--chip); color: var(--muted); font: 750 0.68rem var(--sans); }
+
+    .rules-grid .card { border-top: 4px solid var(--blue); }
+    .rule-number { color: var(--blue); font: 780 2rem/1 var(--sans); letter-spacing: -0.04em; }
+
+    .action-list { margin: 0; padding-left: 1.15rem; }
+    .action-list li { margin-bottom: 0.55rem; }
+    .action-list li::marker { color: var(--teal); }
+    .procure {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.65rem;
+      margin-top: 1rem; counter-reset: field;
+    }
+    .procure div { counter-increment: field; padding: 0.8rem; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+    .procure div::before { content: counter(field, decimal-leading-zero); display: block; color: var(--teal-dark); font: 750 0.67rem var(--mono); }
+    .procure b { font: 700 0.82rem var(--sans); }
+    @media (max-width: 620px) { .procure { grid-template-columns: 1fr 1fr; } }
+
+    .qcard { margin: 0.9rem 0; padding: 1.05rem 1.15rem; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+    .qcard blockquote { margin: 0 0 0.8rem; font-weight: 650; line-height: 1.45; }
+    .qopts { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .qopts button { border: 1px solid var(--line); border-radius: 999px; padding: 0.42rem 0.8rem; background: var(--chip); color: var(--ink); cursor: pointer; font: 700 0.76rem var(--sans); }
+    .qopts button:disabled { cursor: default; opacity: 0.55; }
+    .qopts button.right { border-color: var(--teal); background: var(--teal-tint); color: var(--teal-dark); opacity: 1; }
+    .qopts button.wrong { border-color: var(--amber); background: var(--amber-tint); color: var(--amber); opacity: 1; }
+    .qopts button.answer { border-color: var(--teal); opacity: 1; }
+    .qreveal { display: none; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--line-soft); color: var(--muted); font-size: 0.93rem; }
+    .qreveal.show { display: block; }
+    .qscore { display: none; margin-top: 1rem; font: 750 0.9rem var(--sans); }
+    .qscore.show { display: block; }
+
+    details { margin: 0.9rem 0; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+    summary { cursor: pointer; padding: 0.75rem 1rem; color: var(--teal-dark); font: 700 0.82rem var(--sans); }
+    details .inside { padding: 0 1rem 0.9rem; color: var(--muted); font-size: 0.94rem; }
+
+    .source-list { margin: 1.2rem 0 0; padding-left: 1.35rem; }
+    .source-list li { margin-bottom: 0.68rem; padding-left: 0.2rem; color: var(--muted); font: 0.82rem/1.55 var(--sans); }
+    .source-list b { color: var(--ink); }
+    footer { margin-top: 5rem; padding-top: 1.2rem; border-top: 1px solid var(--line); color: var(--faint); font: 0.76rem/1.6 var(--sans); }
+
+    html.js .reveal { opacity: 0; transform: translateY(12px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    html.js .reveal.in { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      html.js .reveal { opacity: 1; transform: none; transition: none; }
+      .task-fill { transition: none; }
+    }
+    @media print {
+      .language-switch, .hero-actions, .toc, .qopts { display: none !important; }
+      .hero { padding-top: 1.5rem; }
+      .reveal { opacity: 1 !important; transform: none !important; }
+      section { margin-top: 3rem; }
+      .card, .qcard, .warning, .kicker { break-inside: avoid; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="language-switch" href="cs.html" lang="cs" hreflang="cs" aria-label="Open Czech version">Česky</a>
+
+  <main class="page">
+    <header class="hero">
+      <span class="eyebrow">AI, energy, water, materials and infrastructure · Updated 19 July 2026</span>
+      <h1>AI has a footprint.<br>A prompt does not have one number.</h1>
+      <p class="standfirst">Short text, long reasoning, image and video generation can demand very different amounts of computation. Water figures change with the boundary. Efficient individual requests can still add up to rising infrastructure demand. This explainer keeps those labels attached.</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="#method">Learn how to read a footprint ↓</a>
+        <a class="btn" href="#verdict">Go to the conclusion →</a>
+        <a class="btn" href="#evidence">Sources and methods →</a>
+      </div>
+    </header>
+
+    <nav class="toc" aria-label="Contents">
+      <a href="#method">Read a number</a>
+      <a href="#prompt">One prompt</a>
+      <a href="#tasks">Task variation</a>
+      <a href="#water">Water</a>
+      <a href="#scale">System scale</a>
+      <a href="#perspective">Perspective</a>
+      <a href="#hardware">Hardware</a>
+      <a href="#rules">EU rules</a>
+      <a href="#czech">Czech context</a>
+      <a href="#actions">What to do</a>
+      <a href="#quiz">Myth check</a>
+      <a href="#evidence">Sources</a>
+    </nav>
+
+    <section id="method" class="reveal">
+      <span class="eyebrow">01 · Read the label first</span>
+      <h2>Six questions come before the number</h2>
+      <p class="lede">The word <em>prompt</em> does not define an environmental footprint. Every number belongs to a particular task, system and accounting method. Change any of them and the result may change too.</p>
+
+      <div class="lens-tabs" role="group" aria-label="Footprint lenses">
+        <button type="button" aria-pressed="true" data-lens="task">Task</button>
+        <button type="button" aria-pressed="false" data-lens="system">System</button>
+        <button type="button" aria-pressed="false" data-lens="boundary">Boundary</button>
+        <button type="button" aria-pressed="false" data-lens="location">Location</button>
+        <button type="button" aria-pressed="false" data-lens="date">Date</button>
+        <button type="button" aria-pressed="false" data-lens="evidence">Evidence</button>
+      </div>
+      <div class="card lens-panel" id="lens-panel" aria-live="polite">
+        <h3>What task was performed?</h3>
+        <p>A short text reply, long-context synthesis, deliberate reasoning, an image, a video and an agent using several tools are different tasks. They cannot be compared without further context.</p>
+      </div>
+
+      <div class="evidence-key" aria-label="Evidence types used on this page">
+        <div><b>Production measure</b><span>A named service and date; closest to use in the wild.</span></div>
+        <div><b>Controlled benchmark</b><span>Better for comparisons; not a whole public service.</span></div>
+        <div><b>Modelled estimate</b><span>Useful when meters are absent; assumptions drive the result.</span></div>
+        <div><b>Provider LCA</b><span>Broader lifecycle view; provider authorship remains visible.</span></div>
+        <div><b>Sector outlook</b><span>Infrastructure scale and scenarios; not one prompt.</span></div>
+      </div>
+
+      <div class="kicker">
+        <p><strong>Reading rule:</strong> if the task, system, boundary, location, date or measurement method is missing, the number is only a point of reference—not the footprint of your request.<sup><a href="#src-1">1</a></sup><sup><a href="#src-2">2</a></sup><sup><a href="#src-3">3</a></sup><sup><a href="#src-4">4</a></sup></p>
+      </div>
+      <p class="micro">The in-force ITU-T L.1801 recommendation follows the same logic: define the functional unit, system boundary and lifecycle stages before selecting relevant impacts such as climate, water, resources and land.<sup><a href="#src-17">17</a></sup></p>
+    </section>
+
+    <section id="prompt" class="reveal">
+      <span class="eyebrow">02 · One measured text prompt</span>
+      <h2>0.24 Wh is a strong data point—and a narrow one</h2>
+      <p>Google instrumented its production serving stack and reported the median Gemini Apps text prompt in May 2025. The study counted accelerator power, host CPU and memory, provisioned idle capacity and data-centre overhead.<sup><a href="#src-2">2</a></sup></p>
+
+      <div class="bignum-row">
+        <div class="bignum">0.24<span>Wh</span></div>
+        <div class="bignum-note">
+          <div class="chips"><span class="source-chip measure">Production measurement</span><span class="source-chip provider">Provider-authored preprint</span></div>
+          Median Gemini Apps text prompt · May 2025 · roughly 8.6 seconds of a 100 W television.
+        </div>
+      </div>
+
+      <div class="metric-grid">
+        <div class="metric">
+          <div class="label">Energy</div>
+          <div class="value">0.24 Wh</div>
+          <div class="note">Full serving stack defined by the paper.</div>
+        </div>
+        <div class="metric">
+          <div class="label">Emissions</div>
+          <div class="value">0.03 gCO₂e</div>
+          <div class="note">Market-based electricity accounting plus embodied accelerator impacts.</div>
+        </div>
+        <div class="metric">
+          <div class="label">Water</div>
+          <div class="value">0.26 mL</div>
+          <div class="note">Cooling and associated infrastructure inside Google data centres.</div>
+        </div>
+      </div>
+
+      <div class="card stack-wrap">
+        <h3>What sits inside the 0.24 Wh?</h3>
+        <div class="stack" role="img" aria-label="Rounded energy components: 0.14 Wh accelerator, 0.06 Wh host CPU and memory, 0.02 Wh idle capacity, 0.02 Wh data-centre overhead">
+          <span title="Accelerator 0.14 Wh"></span><span title="Host CPU and memory 0.06 Wh"></span><span title="Idle capacity 0.02 Wh"></span><span title="Data-centre overhead 0.02 Wh"></span>
+        </div>
+        <div class="stack-legend">
+          <span><i class="dot" style="background:var(--teal)"></i>Accelerator · 0.14 Wh</span>
+          <span><i class="dot" style="background:var(--blue)"></i>Host CPU &amp; memory · 0.06 Wh</span>
+          <span><i class="dot" style="background:var(--amber)"></i>Idle capacity · 0.02 Wh</span>
+          <span><i class="dot" style="background:var(--rose)"></i>Facility overhead · 0.02 Wh</span>
+        </div>
+        <p class="micro" style="margin-top:.65rem">Component values are rounded. A narrower accelerator-focused method in the same study produced 0.10 Wh, showing why boundary definitions matter.</p>
+      </div>
+
+      <div class="warning">
+        <p><strong>Do not relabel this as “the cost of an AI prompt”.</strong> The value describes one provider, one product class and one month. The authors work for Google, and the paper is a preprint. This is valuable production evidence, not an independent universal benchmark.</p>
+      </div>
+    </section>
+
+    <section id="tasks" class="reveal">
+      <span class="eyebrow">03 · Task choice</span>
+      <h2>Reasoning can change the energy more than the word “prompt” suggests</h2>
+      <p>ML.ENERGY compared 46 models across seven tasks and 1,858 H100/B200 configurations. In one controlled same-model comparison, Qwen 3 32B used much more energy for problem solving than for ordinary conversation.<sup><a href="#src-3">3</a></sup></p>
+
+      <div class="card">
+        <div class="chips"><span class="source-chip measure">Controlled benchmark</span><span class="source-chip model">Preprint</span><span class="scope-chip">Qwen 3 32B · one B200</span></div>
+        <div class="switch" role="group" aria-label="Select benchmark task">
+          <button type="button" aria-pressed="true" data-task="conversation">Conversation</button>
+          <button type="button" aria-pressed="false" data-task="reasoning">Problem solving</button>
+        </div>
+        <div class="task-viz" style="margin-top:1rem">
+          <div class="task-number" id="task-number">95 J<span id="task-name">Text conversation · per response</span></div>
+          <div>
+            <div class="task-track" aria-hidden="true"><div class="task-fill" id="task-fill" style="width:4.34%"></div></div>
+            <p class="task-ratio" id="task-ratio">Baseline for this two-task comparison.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-3" style="margin-top:1rem">
+        <div class="card"><div class="split-stat"><b>23×</b><span>same model</span></div><p class="small">2,192 J for problem solving versus 95 J for conversation in the Qwen 3 32B comparison.</p></div>
+        <div class="card"><div class="split-stat"><b>≈25×</b><span>study mean</span></div><p class="small">Average problem-solving energy per response versus conversation across minimum-energy B200 configurations.</p></div>
+        <div class="card"><div class="split-stat"><b>&gt;100×</b><span>in some cases</span></div><p class="small">The study found video generation sometimes used over 100 times the energy of image generation.</p></div>
+      </div>
+
+      <p class="micro" style="margin-top:.8rem">These are benchmark results, not guaranteed multipliers for every public service. Longer outputs and memory pressure contributed to the measured reasoning gap. GPU utilisation alone produced further three- to fivefold differences in the study.</p>
+    </section>
+
+    <section id="water" class="reveal">
+      <span class="eyebrow">04 · Water</span>
+      <h2>Three published figures. Three different questions.</h2>
+      <p class="lede">Disagreement about “water per prompt” often begins with studies measuring different systems, workloads and parts of the lifecycle. The three familiar figures belong together only when those differences remain visible.</p>
+
+      <div class="water-flow" aria-label="Three water-accounting scopes">
+        <div class="water-step"><b>Scope 1 · On site</b><span>Water consumed at the data centre, often through evaporative cooling.</span></div>
+        <div class="water-step"><b>Scope 2 · Electricity</b><span>Water used off site to generate the electricity serving the facility.</span></div>
+        <div class="water-step"><b>Scope 3 · Supply chain</b><span>Water associated with manufacturing chips, servers and other equipment.</span></div>
+      </div>
+      <p class="micro">The three-scope description follows Li et al.; water withdrawal and water consumption are related but different measures.<sup><a href="#src-4">4</a></sup></p>
+
+      <div class="grid-3" style="margin-top:1.3rem">
+        <div class="card water-card">
+          <div class="chips"><span class="source-chip measure">Production measure + accounting</span></div>
+          <div class="water-value">0.26 mL</div>
+          <h3>Google · May 2025</h3>
+          <p class="small">Median Gemini Apps text prompt. Direct water for cooling and associated data-centre infrastructure. Provider-authored preprint.</p>
+        </div>
+        <div class="card water-card">
+          <div class="chips"><span class="source-chip model">Modelled estimate</span></div>
+          <div class="water-value">500 mL / 10–50</div>
+          <h3>Li et al. · GPT-3 scenario</h3>
+          <p class="small">A 500 mL bottle for roughly 10–50 medium responses, depending on when and where GPT-3 was deployed. Not a meter reading for today's chatbots.</p>
+        </div>
+        <div class="card water-card">
+          <div class="chips"><span class="source-chip provider">Provider LCA estimate</span></div>
+          <div class="water-value">45 mL</div>
+          <h3>Mistral · 2025</h3>
+          <p class="small">Marginal impact reported for a 400-token Le Chat response, excluding the user's terminal, within Mistral's lifecycle study.</p>
+        </div>
+      </div>
+
+      <div class="warning">
+        <div class="no-equation" aria-label="Forty-five millilitres divided by zero point two six millilitres is not a valid comparison">45 mL ÷ 0.26 mL ≠ a valid ranking</div>
+        <p><strong>These numbers cannot simply be divided.</strong> Provider, model, workload, date, location and accounting boundary differ across the studies. The figures therefore cannot rank the systems or establish that one service is always “thirstier”.<sup><a href="#src-2">2</a></sup><sup><a href="#src-4">4</a></sup><sup><a href="#src-5">5</a></sup></p>
+      </div>
+
+      <h3 style="margin-top:2rem">At system scale, indirect water can exceed on-site use</h3>
+      <div class="grid-2" style="margin-top:.8rem">
+        <div class="card water-card">
+          <div class="chips"><span class="source-chip measure">National-laboratory estimate</span><span class="scope-chip">All US data centres · 2023</span></div>
+          <div class="split-stat"><b>66 billion L</b><span>direct on-site consumption</span></div>
+          <div class="split-stat"><b>nearly 800 billion L</b><span>indirect through electricity</span></div>
+          <p class="small">Berkeley Lab estimated both quantities from the location and electricity mix of US facilities. It lacked facility-level power contracts and on-site generation data, so the indirect figure remains a modelled estimate.<sup><a href="#src-14">14</a></sup></p>
+        </div>
+        <div class="card water-card">
+          <div class="chips"><span class="source-chip model">Peer-reviewed scenarios</span><span class="scope-chip">US AI servers · 2024–2030</span></div>
+          <div class="split-stat"><b>731–1,125 million m³</b><span>annual water footprint</span></div>
+          <div class="split-stat"><b>24–44 MtCO₂e</b><span>additional annual emissions</span></div>
+          <p class="small">These are conditional deployment scenarios, not measurements. Expansion, efficiency, grid decarbonisation and the location of servers drive deep uncertainty in the range.<sup><a href="#src-15">15</a></sup></p>
+        </div>
+      </div>
+      <p class="micro" style="margin-top:.8rem">The two cards answer different questions: one estimates all US data centres in 2023; the other models AI-server deployment during 2024–2030. They should not be combined or used as competing estimates of the same population.<sup><a href="#src-14">14</a></sup><sup><a href="#src-15">15</a></sup></p>
+    </section>
+
+    <section id="scale" class="reveal">
+      <span class="eyebrow">05 · From a request to the system</span>
+      <h2>Small per-use numbers can coexist with fast infrastructure growth</h2>
+      <p>The IEA's April 2026 central outlook puts electricity use by <strong>all data centres</strong> at 485 TWh in 2025 and 950 TWh in 2030—roughly double, or around 3% of global electricity demand by 2030. It separately projects AI-focused data-centre consumption to triple.<sup><a href="#src-1">1</a></sup></p>
+
+      <div class="card bars">
+        <div class="chips"><span class="source-chip model">IEA central projection</span><span class="scope-chip">All data centres</span></div>
+        <div class="bar-row">
+          <div class="bar-label">2025</div>
+          <div class="bar-track"><div class="bar-fill" style="width:51.05%"></div></div>
+          <div class="bar-value">485 TWh</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">2030</div>
+          <div class="bar-track"><div class="bar-fill projected" style="width:100%"></div></div>
+          <div class="bar-value">950 TWh</div>
+        </div>
+        <p class="micro">2030 is a projection, not a measurement. The IEA will update it as investment, bottlenecks, efficiency and use patterns change.</p>
+      </div>
+
+      <div class="grid-2" style="margin-top:1rem">
+        <div class="card">
+          <div class="chips"><span class="source-chip measure">IEA 2025 change</span></div>
+          <div class="split-stat"><b>+17%</b><span>all data-centre electricity</span></div>
+          <div class="split-stat"><b>+50%</b><span>AI-focused data-centre electricity</span></div>
+          <p class="small">IEA estimates for growth during 2025.<sup><a href="#src-1">1</a></sup></p>
+        </div>
+        <div class="card">
+          <div class="chips"><span class="source-chip model">Efficiency paradox</span></div>
+          <p>The IEA reports that energy per AI task has fallen by at least an order of magnitude annually in recent years. Yet uptake and more intensive use cases pushed total data-centre demand upward.<sup><a href="#src-1">1</a></sup></p>
+          <p class="small">Efficiency changes the unit cost; it does not decide how many units society uses.</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top:2rem">Global share can hide local concentration</h3>
+      <div class="grid-2" style="margin-top:.8rem">
+        <div class="card">
+          <div class="chips"><span class="source-chip model">US 2030 scenarios</span></div>
+          <div class="split-stat"><b>649 TWh</b><span>reference case</span></div>
+          <p>Berkeley Lab's June 2026 update estimates 11.8% of forecast US electricity in its reference case.</p>
+          <p class="small">Sensitivity range: 521–843 TWh, or 9.5–15.3%. All US data centres, modelled bottom-up.<sup><a href="#src-6">6</a></sup></p>
+        </div>
+        <div class="card">
+          <div class="chips"><span class="source-chip measure">Ireland 2025 statistic</span></div>
+          <div class="split-stat"><b>23%</b><span>of metered electricity</span></div>
+          <p>Ireland's Central Statistics Office reports 23% in 2025, up from 22% in 2024 and 5% in 2015.</p>
+          <p class="small">This is an official data-centre statistic, not an AI-only share.<sup><a href="#src-7">7</a></sup></p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:1rem">
+        <div class="chips"><span class="source-chip model">UN research report</span><span class="scope-chip">Location and distribution</span></div>
+        <h3>A low-carbon option is not automatically low-water or low-land</h3>
+        <p>UNU-INWEH treats location as an environmental and distributional question. Electricity demand, water withdrawals, land use, mineral extraction and e-waste can be concentrated around particular communities even when the benefits of AI are distributed elsewhere.<sup><a href="#src-19">19</a></sup></p>
+        <p class="small">Carbon, water and land footprints can move in different directions. Siting decisions therefore require several indicators, not a carbon score alone.</p>
+      </div>
+    </section>
+
+    <section id="perspective" class="reveal">
+      <span class="eyebrow">06 · What can—and cannot—be compared</span>
+      <h2>AI is one part of a wider digital footprint</h2>
+      <p class="lede">Video and music streaming, social media, web browsing and video calls also depend on devices, networks, data centres and physical hardware. Putting AI in this wider picture is useful, but only if each number keeps its own service, date, unit and system boundary.</p>
+
+      <div class="grid-3" style="margin-top:1.3rem">
+        <div class="card">
+          <div class="chips"><span class="source-chip measure">Production measure</span><span class="scope-chip">Gemini Apps · May 2025</span></div>
+          <div class="split-stat"><b>0.24 Wh</b><span>per median text prompt</span></div>
+          <p class="small">A provider-authored full-stack measurement for one named service and workload. It is operational energy, not a lifecycle footprint for AI in general.<sup><a href="#src-2">2</a></sup></p>
+        </div>
+        <div class="card">
+          <div class="chips"><span class="source-chip model">Historical IEA estimate</span><span class="scope-chip">Video streaming · 2019</span></div>
+          <div class="split-stat"><b>≈77 Wh</b><span>one hour of typical viewing</span></div>
+          <p class="small">The IEA's updated 2019 scenario includes the viewing device, data transmission and data centre. The result changes substantially with the screen, connection and resolution; this is a historical orientation, not a current streaming constant.<sup><a href="#src-22">22</a></sup></p>
+        </div>
+        <div class="card">
+          <div class="chips"><span class="source-chip measure">Peer-reviewed LCA model</span><span class="scope-chip">Annual digital-content profile</span></div>
+          <div class="split-stat"><b>229 kg CO₂e</b><span>one modelled year of use</span></div>
+          <p class="small">A 2024 study modelled 3,230 hours of web use, social media, video and music streaming and video calls for a global-average user archetype. It covers devices, networks and data centres from raw-material extraction to end of life; behaviour data came from 2019–2022 and technology data mostly from 2020.<sup><a href="#src-21">21</a></sup></p>
+        </div>
+      </div>
+
+      <div class="warning">
+        <p><strong>These cards do not form a single scale.</strong> One is electricity for one request, one is electricity for an hour, and one is lifecycle greenhouse-gas emissions for a modelled year. No defensible “one activity equals so many of the other” ratio follows from them.</p>
+      </div>
+      <div class="card" style="margin-top:1rem">
+        <h3>What the comparison does tell us</h3>
+        <p>Digital impacts are not confined to generative AI, and the user's device can matter as much as remote infrastructure. At the same time, a low value for one narrow text request does not describe intensive AI tasks or system-wide growth. A meaningful assessment first defines its functional unit and system boundary—two requirements made explicit in ITU-T L.1801.<sup><a href="#src-17">17</a></sup></p>
+        <p class="small">The earlier “8.6 seconds of a 100 W television” example is only a conversion of 0.24 Wh against a fixed 100 W load. It is not a comparison with an hour of streamed television or with the television's lifecycle footprint.</p>
+      </div>
+    </section>
+
+    <section id="hardware" class="reveal">
+      <span class="eyebrow">07 · Training and hardware</span>
+      <h2>The footprint does not end when inference stops</h2>
+      <p>Training, server manufacture, replacement and disposal sit outside a narrow per-request electricity figure. Some providers publish parts of this picture; coverage and accounting are uneven.</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="chips"><span class="source-chip provider">Provider model card</span></div>
+          <h3>Meta · Llama 3.1 family</h3>
+          <p>Meta reports 39.3 million H100 GPU-hours and 11,390 tCO₂e of location-based training emissions. The same card reports zero market-based training emissions after renewable-energy matching.<sup><a href="#src-10">10</a></sup></p>
+          <p class="small"><strong>Zero market-based is an accounting result, not zero physical emissions.</strong> Keeping both views visible is more informative than choosing the friendlier one.</p>
+        </div>
+        <div class="card">
+          <div class="chips"><span class="source-chip provider">Provider lifecycle study</span></div>
+          <h3>Mistral · LCA disclosure</h3>
+          <p>Mistral published greenhouse-gas, water and resource-depletion indicators for Large 2 and Le Chat. It also calls the study a first approximation and says embodied GPU factors had to be approximated.<sup><a href="#src-5">5</a></sup></p>
+          <p class="small">The disclosure is useful because it states its limits. It is not an independently measured league table.</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top:2rem">Development and material demand are easy to miss</h3>
+      <div class="grid-2" style="margin-top:.8rem">
+        <div class="card">
+          <div class="chips"><span class="source-chip measure">Measured development programme</span><span class="scope-chip">One model series</span></div>
+          <h3>Development is more than the final training run</h3>
+          <p>An ICLR 2025 study followed a series of language models from 20 million to 13 billion active parameters. With hardware manufacture, development and final training included, the programme had a footprint of at least 493 tCO₂e and used at least 2.769 million litres of water. Development activity amounted to about half the impact of final training.<sup><a href="#src-16">16</a></sup></p>
+          <p class="small">This is one development programme and data centre—not a universal multiplier for every model.</p>
+        </div>
+        <div class="card">
+          <div class="chips"><span class="source-chip measure">Physical material analysis</span><span class="scope-chip">One Nvidia A100</span></div>
+          <h3>Specialised hardware is a material system</h3>
+          <p>A 2026 study chemically characterised an Nvidia A100 accelerator and detected 32 elements. It then linked computational demand to the share of hardware lifetime consumed, making equipment lifespan part of the environmental question.<sup><a href="#src-18">18</a></sup></p>
+          <p class="small">The analysis covers the GPU only. Networking, storage, racks, power delivery and cooling are excluded, so it is not a full data-centre material footprint.</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top:2rem">E-waste estimates are still method-sensitive</h3>
+      <div class="grid-2" style="margin-top:.8rem">
+        <div class="card ewaste-card">
+          <div class="ewaste-value">1.2–5.0 million t</div>
+          <span class="horizon">CUMULATIVE · 2020–2030</span>
+          <p>A 2024 <em>Nature Computational Science</em> study estimated cumulative generative-AI e-waste across development scenarios.<sup><a href="#src-8">8</a></sup></p>
+          <p class="micro">This is a broad scenario estimate focused on AI-server hardware, not a precise forecast.</p>
+        </div>
+        <div class="card ewaste-card">
+          <div class="ewaste-value">131.0–224.8 kt/year</div>
+          <span class="horizon">ANNUAL · IN 2030</span>
+          <p>A 2026 peer-reviewed perspective estimated this bounded range from AI-hardware manufacturing capacity and an assumed five-year server lifespan.<sup><a href="#src-9">9</a></sup></p>
+          <p class="micro">The range has no central estimate and depends on how CoWoS manufacturing capacity is actually allocated.</p>
+        </div>
+      </div>
+      <div class="warning"><p><strong>Do not turn these into a “tenfold correction”.</strong> One figure accumulates waste across a decade; the other describes one year. Their scopes and models also differ.</p></div>
+    </section>
+
+    <section id="rules" class="reveal">
+      <span class="eyebrow">08 · What EU rules actually disclose</span>
+      <h2>Reporting is improving, but it is not yet a public per-prompt label</h2>
+      <div class="grid-2 rules-grid">
+        <div class="card">
+          <div class="chips"><span class="source-chip law">Binding EU act</span></div>
+          <div class="rule-number">≥500 kW</div>
+          <h3>Data-centre reporting threshold</h3>
+          <p>Regulation (EU) 2024/1364 covers data centres with at least 500 kW of installed IT power demand. Indicators include energy, power utilisation, waste heat, water and renewable energy.<sup><a href="#src-11">11</a></sup></p>
+          <p class="small">The European database is public at aggregated level; protected business information and submitted KPIs remain confidential.</p>
+        </div>
+        <div class="card">
+          <div class="chips"><span class="source-chip law">AI Act · Annex XI</span></div>
+          <div class="rule-number">Compute + energy</div>
+          <h3>GPAI technical documentation</h3>
+          <p>Annex XI lists computational resources, training time and known or estimated model energy. If energy is unknown, it may be derived from computational-resource information.<sup><a href="#src-12">12</a></sup></p>
+          <p class="small">That is model technical documentation—not a guarantee that every user gets a public, product-level footprint for each request.</p>
+        </div>
+      </div>
+      <div class="card" style="margin-top:1rem">
+        <div class="chips"><span class="source-chip law">European Commission roadmap</span><span class="scope-chip">Forthcoming—not yet an operative label</span></div>
+        <div class="rule-number">2026 → 2027</div>
+        <h3>A broader data-centre rating scheme is planned</h3>
+        <p>The Commission's June 2026 roadmap schedules a rating scheme covering energy efficiency, water efficiency, clean energy, waste-heat reuse and flexibility for adoption in 2026, with the first labels planned for 2027.<sup><a href="#src-20">20</a></sup></p>
+        <p class="small">The roadmap records the policy timetable. It is not itself the delegated rating act and should not be described as a label already available to users.</p>
+      </div>
+    </section>
+
+    <section id="czech" class="reveal">
+      <span class="eyebrow">09 · Czech context</span>
+      <h2>Local infrastructure is not evidence of request routing</h2>
+      <div class="card">
+        <div class="chips"><span class="source-chip provider">Public-institution announcement</span><span class="scope-chip">Project announcement—not evidence of request routing</span></div>
+        <p>IT4Innovations announced the official launch of the Czech AI Factory project on 12 May 2026. The announcement gives a budget of nearly CZK 1 billion and says approximately half will support acquisition and operation of the KarolAIna supercomputer.<sup><a href="#src-13">13</a></sup></p>
+        <p class="small">The announcement confirms a Czech public-infrastructure project. It does not show where an ordinary commercial chatbot processed a request. A regional cloud list or national AI project cannot replace service-specific routing evidence.</p>
+      </div>
+    </section>
+
+    <section id="actions" class="reveal">
+      <span class="eyebrow">10 · Decisions that survive uncertainty</span>
+      <h2>Reduce avoidable demand; demand better evidence</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>For an individual task</h3>
+          <ul class="action-list">
+            <li>Use the least intensive mode that can do the job.</li>
+            <li>Reserve extended reasoning, video and multi-step agents for cases that need their added capability.</li>
+            <li>Keep the input context and requested output only as long as the task requires.</li>
+            <li>Reuse a good result instead of regenerating it without a purpose.</li>
+          </ul>
+          <p class="micro">These choices follow the measured task and output-length mechanisms; they do not promise a fixed percentage saving.<sup><a href="#src-1">1</a></sup><sup><a href="#src-3">3</a></sup></p>
+        </div>
+        <div class="card">
+          <h3>For an institution</h3>
+          <ul class="action-list">
+            <li>Count use by task class and output, not only by “prompts”.</li>
+            <li>Keep location-based and market-based emissions separate.</li>
+            <li>Ask for water withdrawal and consumption across relevant scopes.</li>
+            <li>Include hardware lifetime, reuse and end-of-life plans in procurement.</li>
+          </ul>
+          <p class="micro">An honest, transparent answer may still contain uncertainty. Without these labels, comparisons are unreliable.</p>
+        </div>
+      </div>
+
+      <div class="rulecard card" style="margin-top:1rem">
+        <h3>Six fields to request from a provider</h3>
+        <div class="procure">
+          <div><b>Task</b><p class="micro">Input, output and mode</p></div>
+          <div><b>System</b><p class="micro">Model and serving stack</p></div>
+          <div><b>Boundary</b><p class="micro">What is included</p></div>
+          <div><b>Location</b><p class="micro">Grid and watershed</p></div>
+          <div><b>Date</b><p class="micro">Measurement period</p></div>
+          <div><b>Evidence</b><p class="micro">Meter, benchmark, model or LCA</p></div>
+        </div>
+        <p class="micro" style="margin-top:.8rem">This request is compatible with ITU-T L.1801: a comparison needs an unambiguous functional unit, explicit system boundaries and lifecycle information rather than an unlabeled total.<sup><a href="#src-17">17</a></sup></p>
+      </div>
+    </section>
+
+    <section id="quiz" class="reveal">
+      <span class="eyebrow">11 · Myth check</span>
+      <h2>Can the claim survive with its labels attached?</h2>
+
+      <div class="qcard" data-answer="unsupported">
+        <blockquote>“An AI prompt uses 0.24 Wh.”</blockquote>
+        <div class="qopts"><button type="button" data-choice="supported">Supported as written</button><button type="button" data-choice="unsupported">Missing essential scope</button></div>
+        <div class="qreveal"><strong>Missing scope.</strong> The value belongs to the May 2025 median Gemini Apps text prompt under Google's defined full-stack method. It is not a universal prompt constant.</div>
+      </div>
+
+      <div class="qcard" data-answer="unsupported">
+        <blockquote>“AI used 485 TWh of electricity in 2025.”</blockquote>
+        <div class="qopts"><button type="button" data-choice="supported">Supported as written</button><button type="button" data-choice="unsupported">Missing essential scope</button></div>
+        <div class="qreveal"><strong>Wrong category.</strong> The IEA's 485 TWh value covers all data centres. AI-focused data centres are a subset.</div>
+      </div>
+
+      <div class="qcard" data-answer="unsupported">
+        <blockquote>“No provider has ever published training compute or emissions.”</blockquote>
+        <div class="qopts"><button type="button" data-choice="supported">Supported as written</button><button type="button" data-choice="unsupported">False absolute</button></div>
+        <div class="qreveal"><strong>False absolute.</strong> Meta's Llama 3.1 model card reports GPU-hours and both location- and market-based emissions. The defensible criticism is that disclosure remains uneven and non-standardised.</div>
+      </div>
+
+      <div class="qcard" data-answer="unsupported">
+        <blockquote>“Mistral's 45 mL means its response is about 173 times thirstier than Google's 0.26 mL.”</blockquote>
+        <div class="qopts"><button type="button" data-choice="supported">Supported as written</button><button type="button" data-choice="unsupported">Invalid comparison</button></div>
+        <div class="qreveal"><strong>Invalid comparison.</strong> The services, workloads, methods, dates and water boundaries differ. Arithmetic cannot repair unlike denominators.</div>
+      </div>
+
+      <div class="qcard" data-answer="unsupported">
+        <blockquote>“If each task gets more efficient, total electricity demand must fall.”</blockquote>
+        <div class="qopts"><button type="button" data-choice="supported">Supported as written</button><button type="button" data-choice="unsupported">Scale breaks the inference</button></div>
+        <div class="qreveal"><strong>Scale breaks the inference.</strong> The IEA reports rapid per-task efficiency gains alongside 17% growth in total data-centre electricity demand during 2025.</div>
+      </div>
+      <p class="qscore" id="qscore" aria-live="polite"></p>
+    </section>
+
+    <section id="verdict" class="reveal">
+      <span class="eyebrow">Conclusion</span>
+      <h2>The honest answer is conditional, not evasive</h2>
+      <div class="kicker">
+        <p><strong>AI use has environmental impacts, and “one prompt” is not a defensible unit for measuring them.</strong> A short text request can have a small impact within a specific production measurement. Reasoning, video and agentic work can be far more intensive. At system scale, the pace of adoption and infrastructure growth also matters.</p>
+      </div>
+      <p>The practical response is neither guilt over every useful query nor indifference to scale. Use the capability proportionately, avoid needless high-compute work, and require providers and institutions to report task, system, boundary, location, date and method.</p>
+      <p>The system boundary must also reach beyond the server room. Hardware manufacture, land use, water stress, electricity supply and equipment disposal all occur in specific places. The communities carrying these burdens may not be those receiving most of the benefit.<sup><a href="#src-16">16</a></sup><sup><a href="#src-18">18</a></sup><sup><a href="#src-19">19</a></sup></p>
+    </section>
+
+    <section id="evidence" class="reveal">
+      <span class="eyebrow">Sources and methodology</span>
+      <h2>Where the numbers come from</h2>
+      <p>The page draws on production measurements, controlled benchmarks, modelling studies, lifecycle assessments, official statistics and EU legislation. Company studies are used only for claims about their own systems, and their origin is made explicit. Preprints and forecasts are clearly labelled. This is a source-grounded explainer, not a systematic review or an independent lifecycle assessment.</p>
+
+      <ol class="source-list">
+        <li id="src-1"><b>IEA (2026), <em>Key Questions on Energy and AI</em>.</b> Official intergovernmental report; published 16 April 2026. <a href="https://www.iea.org/reports/key-questions-on-energy-and-ai" target="_blank" rel="noopener noreferrer">Report and executive summary ↗</a></li>
+        <li id="src-2"><b>Elsworth et al. (2025), <em>Measuring the environmental impact of delivering AI at Google Scale</em>.</b> Provider-authored arXiv preprint with production measurements. <a href="https://arxiv.org/abs/2508.15734" target="_blank" rel="noopener noreferrer">arXiv record ↗</a></li>
+        <li id="src-3"><b>Chung et al. (2026), <em>Where Do the Joules Go?</em></b> ML.ENERGY empirical benchmark; arXiv preprint revised 30 January 2026. <a href="https://arxiv.org/abs/2601.22076" target="_blank" rel="noopener noreferrer">arXiv record ↗</a></li>
+        <li id="src-4"><b>Li et al. (2025), <em>Making AI Less “Thirsty”</em>.</b> Peer-reviewed water-footprint modelling published in <em>Communications of the ACM</em>, 68(7), 54–61. <a href="https://doi.org/10.1145/3724499" target="_blank" rel="noopener noreferrer">Publisher record ↗</a></li>
+        <li id="src-5"><b>Mistral AI (2025), <em>Our contribution to a global environmental standard for AI</em>.</b> Provider lifecycle study developed with Carbone 4 and ADEME and reviewed by two consultancies. <a href="https://mistral.ai/news/our-contribution-to-a-global-environmental-standard-for-ai/" target="_blank" rel="noopener noreferrer">Provider report ↗</a></li>
+        <li id="src-6"><b>Lawrence Berkeley National Laboratory (2026), <em>United States Data Center Energy Usage Report: 2025 Update</em>.</b> Bottom-up national-laboratory scenarios; DOI 10.71468/P1RP4F. <a href="https://eta-publications.lbl.gov/publications/united-states-data-center-energy-2025" target="_blank" rel="noopener noreferrer">Official record ↗</a></li>
+        <li id="src-7"><b>Central Statistics Office Ireland (2026), <em>Data Centres Metered Electricity Consumption 2025</em>.</b> Official statistic released 7 July 2026. <a href="https://www.cso.ie/en/releasesandpublications/ep/p-dcmec/datacentresmeteredelectricityconsumption2025/" target="_blank" rel="noopener noreferrer">Statistical release ↗</a></li>
+        <li id="src-8"><b>Wang et al. (2024), <em>E-waste challenges of generative artificial intelligence</em>.</b> Peer-reviewed brief communication; the full version of record was reviewed from an author-posted institutional copy. <a href="https://doi.org/10.1038/s43588-024-00712-6" target="_blank" rel="noopener noreferrer">Publisher record ↗</a></li>
+        <li id="src-9"><b>de Vries-Gao (2026), <em>Recalibrating global artificial intelligence e-waste estimates</em>.</b> Peer-reviewed open-access perspective under CC BY; the full version of record was checked. <a href="https://doi.org/10.1016/j.resconrec.2026.108872" target="_blank" rel="noopener noreferrer">DOI record ↗</a></li>
+        <li id="src-10"><b>Meta (2024), Llama 3.1 model card.</b> Provider disclosure of training compute and emissions accounting. <a href="https://huggingface.co/meta-llama/Llama-3.1-405B-Instruct" target="_blank" rel="noopener noreferrer">Model card ↗</a></li>
+        <li id="src-11"><b>Commission Delegated Regulation (EU) 2024/1364.</b> Data-centre sustainability reporting and methodology. <a href="https://eur-lex.europa.eu/eli/reg_del/2024/1364/oj/eng" target="_blank" rel="noopener noreferrer">EUR-Lex ↗</a></li>
+        <li id="src-12"><b>Regulation (EU) 2024/1689, Annex XI.</b> General-purpose AI technical-documentation fields. <a href="https://ai-act-service-desk.ec.europa.eu/en/ai-act/annex-11" target="_blank" rel="noopener noreferrer">European Commission AI Act Service Desk ↗</a></li>
+        <li id="src-13"><b>IT4Innovations (2026), Czech AI Factory launch announcement.</b> Public-institution project statement created 12 May 2026. <a href="https://www.it4i.cz/en/about/infoservice/press-releases/czech-ai-factory-launches-czechia-introduces-its-own-ai-services-and-supercomputing-infrastructure" target="_blank" rel="noopener noreferrer">Official announcement ↗</a></li>
+        <li id="src-14"><b>Shehabi et al. (2024), <em>2024 United States Data Center Energy Usage Report</em>.</b> Official Lawrence Berkeley National Laboratory report; used here for direct and electricity-related water estimates. <a href="https://eta-publications.lbl.gov/publications/2024-lbnl-data-center-energy-usage-report" target="_blank" rel="noopener noreferrer">Official record ↗</a></li>
+        <li id="src-15"><b>Xiao et al. (2025), <em>Environmental impact and net-zero pathways for sustainable artificial intelligence servers in the USA</em>.</b> Peer-reviewed open-access scenario analysis in <em>Nature Sustainability</em>. <a href="https://www.nature.com/articles/s41893-025-01681-y" target="_blank" rel="noopener noreferrer">Publisher article ↗</a></li>
+        <li id="src-16"><b>Morrison et al. (2025), <em>Holistically Evaluating the Environmental Impact of Creating Language Models</em>.</b> Peer-reviewed ICLR conference paper and measured development-programme case study. <a href="https://proceedings.iclr.cc/paper_files/paper/2025/hash/b76105b94a8c1286c860ad885ec588f1-Abstract-Conference.html" target="_blank" rel="noopener noreferrer">Conference record ↗</a></li>
+        <li id="src-17"><b>ITU-T L.1801 (2026), <em>Guidelines for assessing the environmental impact of artificial intelligence systems</em>.</b> In-force international recommendation based on lifecycle assessment. <a href="https://www.itu.int/rec/T-REC-L.1801/en" target="_blank" rel="noopener noreferrer">ITU record ↗</a></li>
+        <li id="src-18"><b>Falk et al. (2026), <em>From computation to environmental cost: the resource burden of artificial intelligence</em>.</b> Peer-reviewed open-access material-footprint analysis in <em>Communications Earth &amp; Environment</em>. <a href="https://www.nature.com/articles/s43247-026-03537-5" target="_blank" rel="noopener noreferrer">Publisher article ↗</a></li>
+        <li id="src-19"><b>Aczel et al. / UNU-INWEH (2026), <em>Environmental Cost of AI's Energy Use: Carbon, Water and Land Footprints</em>.</b> Full United Nations University research report. <a href="https://unu.edu/inweh/collection/environmental-cost-of-AIs-Enrgy-Use-Carbon-water-and-land-footprints" target="_blank" rel="noopener noreferrer">Official report page ↗</a></li>
+        <li id="src-20"><b>European Commission (2026), <em>Strategic Roadmap for Digitalisation and AI in the Energy Sector</em>.</b> Official communication setting out the planned data-centre rating timetable. <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:52026DC0501" target="_blank" rel="noopener noreferrer">EUR-Lex ↗</a></li>
+        <li id="src-21"><b>Istrate et al. (2024), <em>The environmental sustainability of digital content consumption</em>.</b> Peer-reviewed open-access lifecycle assessment in <em>Nature Communications</em>; its global-average user is a modelled archetype, not a measurement of every user. <a href="https://doi.org/10.1038/s41467-024-47621-w" target="_blank" rel="noopener noreferrer">Publisher record ↗</a></li>
+        <li id="src-22"><b>Kamiya / IEA (2020), <em>The carbon footprint of streaming video: fact-checking the headlines</em>.</b> Official IEA analysis updated 10 December 2020; the displayed energy estimate describes a 2019 viewing scenario and is retained as historical orientation. <a href="https://www.iea.org/commentaries/the-carbon-footprint-of-streaming-video-fact-checking-the-headlines" target="_blank" rel="noopener noreferrer">IEA analysis ↗</a></li>
+      </ol>
+
+      <details>
+        <summary>Methods and limitations</summary>
+        <div class="inside">
+          <p>Every quantitative, regulatory and synthesis claim was checked in the cited source. Full texts were available for the added work on water, model development, assessment methods, materials, e-waste, wider digital use and the UNU-INWEH report.</p>
+          <p>Different methods, boundaries and time horizons are stated beside the relevant values. Measurements, modelled estimates, provider studies and forecasts are therefore not treated as interchangeable. The full UNU-INWEH report supports the qualitative statement about land and unequal distribution of impacts, but its sector-level synthesis and examples do not establish the same effect for every host community.</p>
+        </div>
+      </details>
+    </section>
+
+    <footer>
+      <p><strong>Last updated 19 July 2026.</strong> Figures reflect the source dates shown and may change as reporting improves. This explainer was produced with AI assistance and human editorial oversight; it has not undergone independent external scientific review.</p>
+    </footer>
+  </main>
+
+  <script>
+    (() => {
+      const lensCopy = {
+        task: ['What task was performed?', 'A short text reply, long-context synthesis, deliberate reasoning, an image, a video and an agent using several tools are different tasks. They cannot be compared without further context.'],
+        system: ['Which system did the work?', 'Model size, architecture, hardware, batching, utilisation and serving software can all change the energy used for the same broad task.'],
+        boundary: ['What was counted?', 'Accelerator only, full server, idle capacity, facility overhead, electricity generation, water and hardware manufacture are progressively wider accounting boundaries.'],
+        location: ['Where did it run?', 'Grid emissions, cooling design, weather and watershed stress vary by location. Market-based procurement and location-based physical supply answer different questions.'],
+        date: ['When was it measured?', 'AI hardware and software are changing quickly. A current production median should not be silently combined with an older model or a future sector projection.'],
+        evidence: ['How was the result obtained?', 'A production meter, controlled benchmark, modelled estimate, provider lifecycle study and sector forecast can each be useful—but they support different claims.']
+      };
+      const lensPanel = document.getElementById('lens-panel');
+      document.querySelectorAll('[data-lens]').forEach(button => {
+        button.addEventListener('click', () => {
+          document.querySelectorAll('[data-lens]').forEach(other => other.setAttribute('aria-pressed', String(other === button)));
+          const [title, text] = lensCopy[button.dataset.lens];
+          lensPanel.innerHTML = `<h3>${title}</h3><p>${text}</p>`;
+        });
+      });
+
+      const taskData = {
+        conversation: { value: 95, width: 4.34, label: 'Text conversation · per response', note: 'Baseline for this two-task comparison.', colour: 'var(--teal)' },
+        reasoning: { value: 2192, width: 100, label: 'Problem solving · per response', note: 'About 23× the conversation response in this same-model benchmark.', colour: 'var(--amber)' }
+      };
+      const taskNumber = document.getElementById('task-number');
+      const taskFill = document.getElementById('task-fill');
+      const taskRatio = document.getElementById('task-ratio');
+      document.querySelectorAll('[data-task]').forEach(button => {
+        button.addEventListener('click', () => {
+          document.querySelectorAll('[data-task]').forEach(other => other.setAttribute('aria-pressed', String(other === button)));
+          const item = taskData[button.dataset.task];
+          taskNumber.innerHTML = `${item.value.toLocaleString('en-US')} J<span>${item.label}</span>`;
+          taskFill.style.width = `${item.width}%`;
+          taskFill.style.background = item.colour;
+          taskRatio.textContent = item.note;
+        });
+      });
+
+      let answered = 0;
+      let correct = 0;
+      const cards = [...document.querySelectorAll('.qcard')];
+      const score = document.getElementById('qscore');
+      cards.forEach(card => {
+        card.querySelectorAll('[data-choice]').forEach(button => {
+          button.addEventListener('click', () => {
+            if (card.dataset.done === 'true') return;
+            card.dataset.done = 'true';
+            answered += 1;
+            const isCorrect = button.dataset.choice === card.dataset.answer;
+            if (isCorrect) correct += 1;
+            card.querySelectorAll('[data-choice]').forEach(option => {
+              option.disabled = true;
+              if (option.dataset.choice === card.dataset.answer) option.classList.add('answer');
+            });
+            button.classList.add(isCorrect ? 'right' : 'wrong');
+            card.querySelector('.qreveal').classList.add('show');
+            if (answered === cards.length) {
+              score.textContent = `${correct} of ${cards.length} claims read with their scope intact.`;
+              score.classList.add('show');
+            }
+          });
+        });
+      });
+
+      const reveals = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('in');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+        reveals.forEach(item => observer.observe(item));
+      } else {
+        reveals.forEach(item => item.classList.add('in'));
+      }
+      // Animation must never become a content-access gate if observation is delayed.
+      window.setTimeout(() => reveals.forEach(item => item.classList.add('in')), 900);
+    })();
+  </script>
+</body>
+</html>

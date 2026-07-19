@@ -1,0 +1,13 @@
+qa-output/
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+*.pdf
+*.docx
+*.epub
+*.mhtml
+*.har
+*.cookie*
+.env
+.env.*
