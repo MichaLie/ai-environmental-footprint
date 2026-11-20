@@ -53,7 +53,7 @@ Purpose: keep the Czech public page idiomatic while preserving the meaning, evid
 | watershed stress | zatížení místních vodních zdrojů | Avoid a literal hydrological calque in general prose. |
 | land use / land footprint | využití půdy / půdní stopa / zábor půdy | Choose by context: indicator, footprint or concrete local burden. |
 | distributional impact | rozložení dopadů / distribuční otázka | Means who and which region carries the burden, not a statistical distribution alone. |
-| rating scheme | systém hodnocení | The 2026 Commission roadmap is a timetable, not an operative public label. |
+| rating scheme | systém hodnocení | The delegated regulation was adopted on 21 September 2026 and had not entered into force on 20 November 2026; do not describe the label as available. |
 | general-purpose AI model (GPAI) | obecný model AI (GPAI) | Preserve the exact Czech legal category used by the AI Act; add the established English acronym. |
 | key performance indicator (KPI) | klíčový ukazatel výkonnosti (KPI) | Expand at first occurrence. |
 | token | token; at first use explain as a text unit of the model | The unit is model-specific and does not equal a word. |
@@ -62,7 +62,7 @@ Purpose: keep the Czech public page idiomatic while preserving the meaning, evid
 
 ## Source-backed terminology decisions
 
-Terminology was rechecked on 19 July 2026 against the following Czech institutional, academic and legal sources and against the primary study whose task labels are being translated:
+Terminology was rechecked on 19 July 2026, and the EU data-centre terms again on 20 November 2026, against the following Czech institutional, academic and legal sources and against the primary study whose task labels are being translated:
 
 - **Reasoning versus problem solving:** the primary ML.ENERGY preprint labels the compared tasks `Problem Solving (reasoning on)` and `Text Conversation (reasoning off)`. The public Czech page therefore calls the measured task `řešení problémů` and uses `usuzování (reasoning)` only for the enabled mode. Czech academic usage supports `usuzování`, for example the FEL ČVUT programme uses `logické usuzování`. Sources: [ML.ENERGY / arXiv](https://arxiv.org/abs/2601.22076), [FEL ČVUT – Umělá inteligence](https://oi.fel.cvut.cz/cs/mgr-minor-umela-inteligence).
 - **Prompt:** the Czech Digital and Information Agency defines a prompt as a `vstupní instrukce nebo otázka` and also uses `vstupní zadání (prompt)`. The page uses `vstupní zadání (prompt)` at first substantive mention and the established shorter form thereafter. Source: [DIA – Slovníček AI](https://egovai.dia.gov.cz/slovnicek.html).
@@ -76,10 +76,10 @@ English originals are added at the first substantive occurrence when they help r
 
 - 0.24 Wh; 0.03 gCO₂e; 0.26 mL; component values 0.14/0.06/0.02/0.02 Wh.
 - 95 J and 2,192 J; ratios 23×, approximately 25× and over 100×.
-- Water examples: 500 mL per roughly 10–50 responses; 45 mL for a 400-token Le Chat response.
+- Water examples: 500 mL per roughly 10–50 responses; 45 mL for a 400-token Le Chat response (Le Chat was renamed Vibe in May 2026).
 - US water layers: 66 billion L direct and nearly 800 billion L indirect in 2023 for all US data centres.
 - US AI-server scenarios: annual 731–1,125 million m³ water and 24–44 MtCO₂e during 2024–2030; projections, not observations.
-- IEA: 485 TWh in 2025; 950 TWh in 2030; around 3%; +17%; +50%.
+- IEA April 2026 report: 485 TWh in 2025; 950 TWh in 2030; around 3%; +17%; +50%. IEA World Energy Outlook 2026: just under 500 TWh today; 1.7%; 1 000 TWh by 2030 in the Stated Policies Scenario (STEPS). Czech: `scénář deklarovaných politik (Stated Policies Scenario, STEPS)`; never `scénář stávajících politik`, which would name the Current Policies Scenario. No official Czech IEA rendering was found, so the English name stays beside the Czech one.
 - US scenarios: 649 TWh reference; 521–843 TWh and 9.5–15.3% sensitivity range.
 - Ireland: 23% in 2025, 22% in 2024, 5% in 2015.
 - Meta: 39.3 million H100 GPU-hours; 11,390 tCO₂e.
@@ -87,14 +87,15 @@ English originals are added at the first substantive occurrence when they help r
 - Material analysis: one Nvidia A100; 32 detected elements; GPU-only scope.
 - E-waste: 1.2–5.0 million t cumulative over 2020–2030; 131.0–224.8 kt/year in 2030.
 - EU reporting threshold: at least 500 kW installed IT power demand.
-- EU roadmap: rating-scheme adoption planned in 2026; first labels planned for 2027. This is not an operative label.
+- EU rating scheme: delegated regulation adopted 21 September 2026; first labels by 15 August 2027; under scrutiny and not in force on 20 November 2026. Czech terms follow the official Czech text of Delegated Regulation (EU) 2024/1364: `účinnost využití energie (PUE)`, `účinnost využití vody (WUE)` (the page writes `sladké vody` because the adopted act bases WUE on freshwater input), `chladicí denostupně`, `vykazované období`; an act that is not yet in force `nevstoupilo v platnost` (not `není účinné`); scrutiny of a delegated act is `kontrola` or `lhůta pro vyslovení námitek` (not `přezkum`, which is the act's review clause).
+- EU database: 770 data centres in the first reporting period (May–September 2024), around 36% of the estimated number subject to reporting; Czechia 0 of an estimated 50 in the first period (data up to 2023).
 - Wider digital context: approximately 77 Wh for one hour in the IEA's historical 2019 streaming scenario; 229 kg CO₂e for a modelled annual profile of 3 230 hours in Istrate et al. The values are not converted into AI-equivalence ratios.
 - Czech AI Factory: announced 12 May 2026; nearly CZK 1 billion; approximately half for KarolAIna acquisition and operation.
-- Page/source update date: 19 July 2026.
+- Page/source update date: 20 November 2026.
 
 ## Parity rules
 
-- Both pages keep the same 13 section IDs, 22 displayed source entries, citation anchors and 5 quiz cards.
+- Both pages keep the same 13 section IDs, 28 displayed source entries, citation anchors and 5 quiz cards.
 - Parity is semantic and evidential, not sentence-by-sentence. Czech may split, reorder or recast a passage when that improves comprehension, provided the claim strength, scope, caveat and citation remain attached.
 - External source URLs and source order must be identical.
 - Quantitative strings may use Czech decimal commas in visible prose, but machine QA must confirm numeric equivalence.

@@ -24,12 +24,12 @@ const pageConfig = {
     scoreText: '5 of 5',
     conclusion: 'The honest answer is conditional, not evasive',
     labels: {
-      hero: 'Updated 19 July 2026',
+      hero: 'Updated 20 November 2026',
       evidenceEyebrow: 'Sources and methodology',
       evidenceHeading: 'Where the numbers come from',
       methodsSummary: 'Methods and limitations'
     },
-    protectedText: ['0.24 Wh', '0.03 gCO₂e', '0.26 mL', '0.14 Wh', '0.06 Wh', '0.02 Wh', '95 J', '2,192 J', '23×', '≈25×', '>100×', '500 mL', '10–50', '66 billion L', 'nearly 800 billion L', '731–1,125 million m³', '24–44 MtCO₂e', '485 TWh', '950 TWh', '+17%', '+50%', '≈77 Wh', '229 kg CO₂e', '3,230 hours', '649 TWh', '521–843 TWh', '9.5–15.3%', '23%', '22%', '5%', '39.3 million', '11,390', '493 tCO₂e', '2.769 million', '32 elements', '1.2–5.0 million', '131.0–224.8 kt', '≥500 kW', '2026 → 2027', '12 May 2026', 'CZK 1 billion']
+    protectedText: ['0.24 Wh', '0.03 gCO₂e', '0.26 mL', '0.14 Wh', '0.06 Wh', '0.02 Wh', '95 J', '2,192 J', '23×', '≈25×', '>100×', '500 mL', '10–50', '66 billion L', 'nearly 800 billion L', '731–1,125 million m³', '24–44 MtCO₂e', '485 TWh', '950 TWh', '1,000 TWh', '+17%', '+50%', '≈77 Wh', '229 kg CO₂e', '3,230 hours', '649 TWh', '521–843 TWh', '9.5–15.3%', '23%', '22%', '5%', '39.3 million', '11,390', '493 tCO₂e', '2.769 million', '32 elements', '1.2–5.0 million', '131.0–224.8 kt', '≥500 kW', '2026 → 2027', '12 May 2026', 'CZK 1 billion']
   },
   cs: {
     url: czechUrl,
@@ -45,12 +45,12 @@ const pageConfig = {
     scoreText: '5 z 5',
     conclusion: 'Poctivá odpověď závisí na kontextu',
     labels: {
-      hero: 'Aktualizováno 19. července 2026',
+      hero: 'Aktualizováno 20. listopadu 2026',
       evidenceEyebrow: 'Zdroje a metodika',
       evidenceHeading: 'Odkud čísla pocházejí',
       methodsSummary: 'Metody a omezení'
     },
-    protectedText: ['0,24 Wh', '0,03 gCO₂e', '0,26 ml', '0,14 Wh', '0,06 Wh', '0,02 Wh', '95 J', '2 192 J', '23×', '≈25×', '>100×', '500 ml', '10–50', '66 miliard l', 'téměř 800 miliard l', '731–1 125 milionů m³', '24–44 Mt CO₂e', '485 TWh', '950 TWh', '+17 %', '+50 %', '≈77 Wh', '229 kg CO₂e', '3 230 hodin', '649 TWh', '521–843 TWh', '9,5–15,3 %', '23 %', '22 %', '5 %', '39,3 milionu', '11 390', '493 t CO₂e', '2,769 milionu', '32 prvků', '1,2–5,0 milionu', '131,0–224,8 kt', '≥500 kW', '2026 → 2027', '12. května 2026', '1 miliardu Kč']
+    protectedText: ['0,24 Wh', '0,03 gCO₂e', '0,26 ml', '0,14 Wh', '0,06 Wh', '0,02 Wh', '95 J', '2 192 J', '23×', '≈25×', '>100×', '500 ml', '10–50', '66 miliard l', 'téměř 800 miliard l', '731–1 125 milionů m³', '24–44 Mt CO₂e', '485 TWh', '950 TWh', '1 000 TWh', '+17 %', '+50 %', '≈77 Wh', '229 kg CO₂e', '3 230 hodin', '649 TWh', '521–843 TWh', '9,5–15,3 %', '23 %', '22 %', '5 %', '39,3 milionu', '11 390', '493 t CO₂e', '2,769 milionu', '32 prvků', '1,2–5,0 milionu', '131,0–224,8 kt', '≥500 kW', '2026 → 2027', '12. května 2026', '1 miliardu Kč']
   }
 };
 
@@ -193,7 +193,7 @@ async function inspectViewport(browser, language, viewportLabel, viewport, optio
   check(`${label}: title is present`, audit.title.length > 0, audit.title);
   check(`${label}: exactly one h1 and one main landmark`, audit.h1Count === 1 && audit.mainCount === 1, `${audit.h1Count} h1; ${audit.mainCount} main`);
   check(`${label}: thirteen narrative sections render`, audit.sectionCount === 13, String(audit.sectionCount));
-  check(`${label}: twenty-two public sources render`, audit.sourceCount === 22, String(audit.sourceCount));
+  check(`${label}: twenty-eight public sources render`, audit.sourceCount === 28, String(audit.sourceCount));
   check(`${label}: all interactive groups render`, audit.quizCount === 5 && audit.lensCount === 6 && audit.taskCount === 2, `${audit.quizCount} quiz; ${audit.lensCount} lenses; ${audit.taskCount} tasks`);
   check(`${label}: only the reciprocal language page is linked locally`, sameArray(audit.relativeFileLinks, [config.otherFile]), JSON.stringify(audit.relativeFileLinks));
   check(`${label}: no runtime asset dependencies`, audit.runtimeAssetRefs.length === 0, audit.runtimeAssetRefs.join(', '));
@@ -281,7 +281,7 @@ async function inspectDirectFile(browser, language) {
   }));
 
   check(`Direct file ${language}: opens through file protocol`, audit.protocol === 'file:', audit.protocol);
-  check(`Direct file ${language}: complete narrative renders`, audit.lang === config.lang && audit.title.length > 0 && audit.sourceCount === 22, `${audit.lang}; ${audit.title}; ${audit.sourceCount} sources`);
+  check(`Direct file ${language}: complete narrative renders`, audit.lang === config.lang && audit.title.length > 0 && audit.sourceCount === 28, `${audit.lang}; ${audit.title}; ${audit.sourceCount} sources`);
   check(`Direct file ${language}: reciprocal page is the only local dependency`, audit.switchHref === config.otherFile && fs.existsSync(path.resolve(__dirname, `../site/${config.otherFile}`)), audit.switchHref);
   check(`Direct file ${language}: no runtime asset dependencies`, audit.runtimeAssetRefs.length === 0, audit.runtimeAssetRefs.join(', '));
   await page.getByRole('button', { name: config.lensButton, exact: true }).click();

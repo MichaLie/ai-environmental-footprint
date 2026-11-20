@@ -37,13 +37,11 @@ Displayed wording: **about 25x on average in this benchmark**. The site does not
 
 ### Global data-centre outlook
 
-The IEA central projection is `485 TWh` in 2025 and `950 TWh` in 2030.
+The IEA's April 2026 report gives `485 TWh` in 2025 and `950 TWh` in 2030 in its central case (`950 / 485 = 1.9588`), about 3% of global electricity demand in 2030.
 
-`950 / 485 = 1.9588`
+The IEA's November 2026 World Energy Outlook gives "just under 500 TWh" today (1.7% of global demand) and says consumption "doubles to reach 1 000 terawatt-hours by 2030" in the Stated Policies Scenario.
 
-`(950 - 485) / 485 x 100 = 95.8763%`
-
-Displayed wording: **roughly doubles**. Both values cover all data centres; the separate IEA statement that AI-focused data-centre consumption triples over the period remains labelled as a projection.
+Displayed wording: both reports are named with their own figures. **Doubling** is the outlook's own word; the page does not calculate `1 000 / 485`, because the two numbers come from different reports. The April central case and the November scenario are different frameworks, so the page does not describe the change from 950 to 1 000 TWh as a revision in either direction. The outlook gives no 2030 share, so "around 3%" stays attached to the April report. The bar chart pairs the April 2025 estimate with the November 2030 projection and says so in its caption. All values cover all data centres; the April statement that AI-focused data-centre consumption triples remains labelled as a projection.
 
 ### United States outlook
 
@@ -80,6 +78,6 @@ Provider disclosures are examples, not a ranking. Meta's Llama 3.1 family model 
 
 ### Model development and material footprint
 
-The ICLR lifecycle case (`493 tCO2e`, `2.769 million L`, about half of emissions attributed to training) is reported as one documented development process. It is not scaled to other model sizes or used as a generic training-to-development multiplier.
+The ICLR lifecycle case (`493 tCO2e`, `2.769 million L`; development `159 tCO2e` against `312 tCO2e` for final training, so development amounted to about half of final training) is reported as one documented development process. It is not scaled to other model sizes or used as a generic training-to-development multiplier.
 
 The `32 elements` material result is a count within the accelerator components assessed by the study. It is not extrapolated to whole servers, data centres, mining impacts or a per-prompt material footprint.

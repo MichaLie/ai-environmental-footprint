@@ -63,7 +63,7 @@ def main() -> None:
             re.I,
         )
         require(len(sections) == 13, f"{lang}: expected 13 sections, found {len(sections)}")
-        require(len(sources) == 22, f"{lang}: expected 22 sources, found {len(sources)}")
+        require(len(sources) == 28, f"{lang}: expected 28 sources, found {len(sources)}")
         require(len(re.findall(r'class="qcard"', html)) == 5, f"{lang}: expected 5 claim cards")
         require(local == [counterparts[lang]], f"{lang}: unexpected local links: {local}")
         require(not runtime_assets, f"{lang}: external runtime assets found: {runtime_assets}")
@@ -83,9 +83,9 @@ def main() -> None:
 
     registry = read_csv(EVIDENCE / "source_registry.csv")
     matrix = read_csv(EVIDENCE / "CLAIM_EVIDENCE_MATRIX.csv")
-    require(len(registry) == 24, f"Expected 24 source records, found {len(registry)}")
-    require(len(matrix) == 64, f"Expected 64 evidence rows, found {len(matrix)}")
-    require(len({row["claim_id"] for row in matrix}) == 46, "Expected 46 material claims")
+    require(len(registry) == 30, f"Expected 30 source records, found {len(registry)}")
+    require(len(matrix) == 73, f"Expected 73 evidence rows, found {len(matrix)}")
+    require(len({row["claim_id"] for row in matrix}) == 54, "Expected 54 material claims")
     require(len({row["source_id"] for row in registry}) == len(registry), "Source IDs are not unique")
     require(all(row["source_id"] in {item["source_id"] for item in registry} for row in matrix), "Unknown source ID in evidence matrix")
     require(all(row["access_status"] == "FULL_TEXT" and row["audit_status"] == "PASS" for row in matrix), "Every displayed evidence row must be full-text PASS")

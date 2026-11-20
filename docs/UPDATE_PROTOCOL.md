@@ -1,5 +1,17 @@
 # Update protocol
 
+## When to run a full refresh
+
+A full evidence refresh is triggered by new knowledge, not by the calendar. A monthly watch checks the triggers below and `evidence/WATCH_LIST.md`; when one fires, run the full refresh.
+
+1. A displayed source is corrected, retracted or replaced by a newer edition.
+2. Something the page describes as upcoming has happened, or a dated statement has passed its date.
+3. A provider publishes a new per-request, training or facility disclosure, or a peer-reviewed measurement appears in a category the page displays.
+4. The IEA or another statistical body the page cites publishes a new sector figure.
+5. Three or more new items have been added to the watch list since the last full refresh, even if none alone changes a displayed claim.
+
+The watch only reports. It does not edit the pages or publish.
+
 ## 1. Define the change
 
 Classify it as presentation-only, evidence-affecting or a full evidence refresh. List the affected sections, claims and language versions before editing.

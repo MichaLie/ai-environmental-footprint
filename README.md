@@ -26,6 +26,6 @@ Instructions for updating or adapting the site are available in [AGENTS.md](AGEN
 
 ## Scope
 
-This is an educational explainer, not a systematic review or an independent lifecycle assessment. The evidence was last comprehensively reviewed on **19 July 2026**.
+This is an educational explainer, not a systematic review or an independent lifecycle assessment. All claims were last read against their full texts on **19 July 2026**. A full refresh on **20 November 2026** rechecked the status of every source and read every new or changed claim against its full text.
 
 The project was developed with AI assistance and human scientific and editorial oversight. It has not undergone independent external scientific review.
